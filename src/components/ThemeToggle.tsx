@@ -22,12 +22,14 @@ export default function ThemeToggle() {
     <button
       onClick={toggle}
       className={cn(
-        "flex h-9 w-9 items-center justify-center rounded-full transition-colors",
-        "text-muted hover:bg-amber-100 hover:text-amber-700 dark:hover:bg-forest dark:hover:text-amber-300"
+        "flex h-9 w-9 items-center justify-center rounded-xl transition-all duration-200",
+        "text-muted hover:bg-forest/10 hover:text-forest dark:hover:bg-leaf/10 dark:hover:text-leaf"
       )}
       aria-label="Toggle dark mode"
     >
-      {dark ? <Sun size={18} /> : <Moon size={18} />}
+      <div className="transition-transform duration-300 active:scale-90">
+        {dark ? <Sun size={17} /> : <Moon size={17} />}
+      </div>
     </button>
   )
 }
