@@ -3,28 +3,15 @@
 import { useEffect, useState } from "react"
 import { useSession, signOut } from "next-auth/react"
 import TreeAnimation from "@/components/TreeAnimation"
+import { ACHIEVEMENTS } from "@/lib/constants"
 
 interface LeaderUser {
-  id: string
-  name: string
-  email: string
-  points: number
-  scans: number
+  id: string; name: string; email: string; points: number; scans: number
 }
 
-const achievements = [
-  { name: "Plastic Warrior", unlocked: true },
-  { name: "Green Citizen", unlocked: true },
-  { name: "Eco Hero", unlocked: true },
-  { name: "Waste Master", unlocked: false },
-  { name: "Recycling Legend", unlocked: false },
-  { name: "Carbon Crusher", unlocked: false },
-]
-
-const savedRewards = [
-  { brand: "GreenBite Cafe", name: "Free Organic Coffee", points: 200 },
-  { brand: "EcoSip", name: "Eco Meal Discount", points: 350 },
-]
+interface ScanBreakdown {
+  user_id: string; material: string; count: number
+}
 
 function getInitials(name: string) {
   const parts = name.trim().split(/\s+/)
@@ -34,14 +21,16 @@ function getInitials(name: string) {
 export default function ProfilePage() {
   const { data: session } = useSession()
   const [users, setUsers] = useState<LeaderUser[]>([])
+  const [breakdown, setBreakdown] = useState<ScanBreakdown[]>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    fetch("/api/leaderboard")
-      .then((r) => r.json())
-      .then((data) => { setUsers(data.users || []) })
-      .catch(() => {})
-      .finally(() => setLoading(false))
+    Promise.all([
+      fetch("/api/leaderboard").then((r) => r.json()),
+    ]).then(([data]) => {
+      setUsers(data.users || [])
+      setBreakdown(data.breakdown || [])
+    }).catch(() => {}).finally(() => setLoading(false))
   }, [])
 
   const myUser = users.find((u) => u.id === session?.user?.id)
@@ -50,7 +39,16 @@ export default function ProfilePage() {
   const scans = myUser?.scans || 0
   const xp = Math.floor(points * 2.5)
 
-  // Derived activity from real scan data
+  const myBreakdown = breakdown.filter((b) => b.user_id === session?.user?.id)
+  const materialCounts: Record<string, number> = {}
+  for (const b of myBreakdown) materialCounts[b.material] = (materialCounts[b.material] || 0) + b.count
+
+  const achievements = ACHIEVEMENTS.map((a) => ({
+    id: a.id, name: a.name, desc: a.desc, icon: a.icon,
+    unlocked: a.check(scans, points, materialCounts),
+  }))
+  const unlockedCount = achievements.filter((a) => a.unlocked).length
+
   const activityItems = scans > 0
     ? [
         { title: `${scans} item${scans > 1 ? "s" : ""} recycled`, time: "All time", points: `+${points}`, dot: "green" as const },
@@ -69,38 +67,45 @@ export default function ProfilePage() {
         <div className="profile-email">{email}</div>
       </div>
 
-      {/* Tree + Stats */}
       <div className="card" style={{ padding: "16px 0", marginBottom: 16, textAlign: "center" }}>
         <TreeAnimation points={points} />
       </div>
 
       <div className="profile-stats" style={{ marginBottom: 16 }}>
-        <div className="profile-stat">
-          <div className="ps-value">{loading ? "..." : points}</div>
-          <div className="ps-label">EcoPoints</div>
-        </div>
-        <div className="profile-stat">
-          <div className="ps-value">{loading ? "..." : xp}</div>
-          <div className="ps-label">XP</div>
-        </div>
-        <div className="profile-stat">
-          <div className="ps-value">{loading ? "..." : `#${myRank}`}</div>
-          <div className="ps-label">Rank</div>
+        <div className="profile-stat"><div className="ps-value">{loading ? "..." : points}</div><div className="ps-label">EcoPoints</div></div>
+        <div className="profile-stat"><div className="ps-value">{loading ? "..." : xp}</div><div className="ps-label">XP</div></div>
+        <div className="profile-stat"><div className="ps-value">{loading ? "..." : `#${myRank}`}</div><div className="ps-label">Rank</div></div>
+        <div className="profile-stat"><div className="ps-value">{loading ? "..." : scans}</div><div className="ps-label">Scans</div></div>
+      </div>
+
+      <div className="profile-section">
+        <h3>Achievements <span style={{ fontSize: 13, fontWeight: 400, color: "var(--grey-400)" }}>({unlockedCount}/{achievements.length})</span></h3>
+        <div className="badge-grid" style={{ gridTemplateColumns: "repeat(4, 1fr)" }}>
+          {achievements.map((a) => (
+            <div key={a.id} className={`badge-item ${a.unlocked ? "" : "locked"}`} title={a.desc}>
+              <div className={`badge-icon ${a.unlocked ? "unlocked" : "locked"}`} style={{ fontSize: 22 }}>{a.icon}</div>
+              <div className="badge-name" style={{ fontSize: 10 }}>{a.name}</div>
+            </div>
+          ))}
         </div>
       </div>
 
       <div className="profile-section">
-        <h3>Badges &amp; Achievements</h3>
-        <div className="badge-grid">
-          {achievements.map((a) => (
-            <div key={a.name} className={`badge-item ${a.unlocked ? "" : "locked"}`}>
-              <div className={`badge-icon ${a.unlocked ? "unlocked" : "locked"}`}>
-                {a.unlocked ? "\uD83C\uDFC6" : "\uD83D\uDD12"}
+        <h3>Material Breakdown</h3>
+        {myBreakdown.length === 0 ? (
+          <div style={{ color: "var(--grey-400)", fontSize: 13, padding: 8 }}>No scans yet</div>
+        ) : (
+          myBreakdown.map((b) => (
+            <div key={b.material} className="activity-item">
+              <div className={`activity-dot ${b.material === "Plastic" ? "green" : "mint"}`} />
+              <div className="activity-content">
+                <div className="activity-title">{b.material}</div>
+                <div className="activity-time">{b.count} scan{b.count !== 1 ? "s" : ""}</div>
               </div>
-              <div className="badge-name">{a.name}</div>
+              <div className="activity-points">{b.count}</div>
             </div>
-          ))}
-        </div>
+          ))
+        )}
       </div>
 
       <div className="profile-section">
@@ -117,28 +122,7 @@ export default function ProfilePage() {
         ))}
       </div>
 
-      <div className="profile-section">
-        <h3>Saved Rewards</h3>
-        <div className="reward-grid">
-          {savedRewards.map((r) => (
-            <div key={r.name} className="reward-card">
-              <div className="reward-brand">{r.brand}</div>
-              <div className="reward-name">{r.name}</div>
-              <div className="reward-points"><strong>{r.points}</strong> EcoPoints</div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      <button
-        onClick={() => signOut({ callbackUrl: "/" })}
-        style={{
-          width: "100%", marginTop: 20, padding: 14,
-          border: "1.5px solid var(--grey-200)", borderRadius: 10,
-          background: "transparent", fontSize: 14, fontWeight: 500,
-          fontFamily: "inherit", color: "var(--grey-500)", cursor: "pointer",
-        }}
-      >
+      <button onClick={() => signOut({ callbackUrl: "/" })} style={{ width: "100%", marginTop: 20, padding: 14, border: "1.5px solid var(--grey-200)", borderRadius: 10, background: "transparent", fontSize: 14, fontWeight: 500, fontFamily: "inherit", color: "var(--grey-500)", cursor: "pointer" }}>
         Logout
       </button>
     </>
