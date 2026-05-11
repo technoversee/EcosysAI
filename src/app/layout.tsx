@@ -6,6 +6,8 @@ import ThemeToggle from "@/components/ThemeToggle"
 import NotificationBanner from "@/components/NotificationBanner"
 import NatureBackground from "@/components/NatureBackground"
 import SplashScreen from "@/components/SplashScreen"
+import AuthButton from "@/components/AuthButton"
+import Providers from "@/components/Providers"
 
 export const metadata: Metadata = {
   title: "EcosysAI — Scan. Sort. Earn.",
@@ -21,6 +23,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400,500,600,700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
       </head>
       <body className="min-h-dvh flex flex-col font-sans antialiased">
+        <Providers>
         <SplashScreen />
         <NatureBackground />
 
@@ -48,6 +51,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <NotificationBanner />
         <div className="flex flex-1 flex-col lg:ml-60">{children}</div>
         <BottomNav />
+        </Providers>
       </body>
     </html>
   )

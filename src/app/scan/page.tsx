@@ -1,15 +1,47 @@
 "use client"
 
 import { useRef, useState } from "react"
-import { Camera, Upload, Image as ImageIcon, ScanLine } from "lucide-react"
+import { Camera, Upload, Image as ImageIcon, ScanLine, Leaf, Loader2, CheckCircle, AlertCircle } from "lucide-react"
+
+interface ScanResult {
+  material: string
+  confidence: number
+  explanation: string
+  pointsAwarded: number
+  totalPoints: number
+}
+
+const MATERIAL_COLORS: Record<string, string> = {
+  Plastic: "bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300",
+  Metal: "bg-slate-100 text-slate-700 dark:bg-slate-800/40 dark:text-slate-300",
+  Glass: "bg-cyan-100 text-cyan-800 dark:bg-cyan-900/30 dark:text-cyan-300",
+  Paper: "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300",
+  "Food Waste": "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300",
+}
 
 export default function ScanPage() {
   const inputRef = useRef<HTMLInputElement>(null)
   const [preview, setPreview] = useState<string | null>(null)
+  const [file, setFile] = useState<File | null>(null)
+  const [loading, setLoading] = useState(false)
+  const [result, setResult] = useState<ScanResult | null>(null)
+  const [error, setError] = useState<string | null>(null)
+
+  async function handleScan() {
+    if (!file) return
+    setLoading(true); setError(null); setResult(null)
+    try {
+      const fd = new FormData(); fd.append("image", file)
+      const res = await fetch("/api/classify", { method: "POST", body: fd })
+      if (!res.ok) { const e = await res.json(); throw new Error(e.error || "Classification failed") }
+      setResult(await res.json())
+    } catch (e: any) { setError(e.message) }
+    finally { setLoading(false) }
+  }
 
   function handleFile(e: React.ChangeEvent<HTMLInputElement>) {
     const f = e.target.files?.[0]
-    if (f) setPreview(URL.createObjectURL(f))
+    if (f) { setPreview(URL.createObjectURL(f)); setFile(f); setResult(null); setError(null) }
   }
 
   return (
@@ -21,15 +53,11 @@ export default function ScanPage() {
             <ScanLine size={12} />
             AI Recognition
           </div>
-          <h1 className="font-serif text-xl font-semibold tracking-tight text-pine md:text-2xl lg:text-3xl">
-            Scan Waste
-          </h1>
-          <p className="mt-1 text-sm text-warm-grey md:text-base">
-            Take a photo and let AI identify the material
-          </p>
+          <h1 className="font-serif text-xl font-semibold tracking-tight text-pine md:text-2xl lg:text-3xl">Scan Waste</h1>
+          <p className="mt-1 text-sm text-warm-grey md:text-base">Take a photo and let AI identify the material</p>
         </div>
 
-        {/* Upload area — side by side on tablet+ */}
+        {/* Upload + Result */}
         <div className="grid w-full gap-4 md:grid-cols-2 md:gap-6">
           <div
             onClick={() => inputRef.current?.click()}
@@ -57,33 +85,66 @@ export default function ScanPage() {
             <input ref={inputRef} type="file" accept="image/*" capture="environment" className="hidden" onChange={handleFile} />
           </div>
 
-          {/* Result panel */}
           <div className="flex flex-col gap-3">
-            <button
-              onClick={() => inputRef.current?.click()}
-              className="flex w-full items-center justify-center gap-2 rounded-xl border border-card-border bg-card/60 px-4 py-3 text-sm font-medium text-warm-grey backdrop-blur-sm transition-all duration-200 hover:border-pine/25 hover:bg-pine/4 hover:text-fg"
-            >
-              <Upload size={15} />
-              Upload from Gallery
-            </button>
+            <div className="flex gap-2">
+              {preview && !loading && !result && (
+                <button onClick={handleScan} className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-pine px-4 py-3 text-sm font-medium text-white shadow-sm transition-all hover:bg-pine-light active:scale-[0.98]">
+                  <Leaf size={16} />
+                  Classify
+                </button>
+              )}
+              <button onClick={() => inputRef.current?.click()} className="flex items-center justify-center gap-2 rounded-xl border border-card-border bg-card/60 px-4 py-3 text-sm font-medium text-warm-grey backdrop-blur-sm transition-all duration-200 hover:border-pine/25 hover:bg-pine/4 hover:text-fg">
+                <Upload size={15} />
+                {preview ? "Retake" : "Upload"}
+              </button>
+            </div>
 
-            {preview ? (
-              <div className="flex flex-1 flex-col items-center justify-center gap-4 rounded-2xl bg-card/60 px-5 py-6 ring-1 ring-card-border backdrop-blur-sm">
-                <div className="h-10 w-10 animate-pulse rounded-xl bg-sage/15" />
-                <div className="w-full space-y-2">
-                  <div className="h-3 w-1/3 rounded-full bg-sage/15" />
-                  <div className="h-2.5 w-2/3 rounded-full bg-sage/10" />
+            {loading && (
+              <div className="flex flex-1 flex-col items-center justify-center gap-4 rounded-2xl bg-card/60 px-5 py-8 ring-1 ring-card-border backdrop-blur-sm">
+                <Loader2 size={28} className="animate-spin text-pine" />
+                <p className="text-sm text-warm-grey">Analyzing with AI...</p>
+                <div className="h-1.5 w-36 overflow-hidden rounded-full bg-sage/20">
+                  <div className="h-full w-1/2 rounded-full bg-gradient-to-r from-sage to-pine animate-shimmer" />
                 </div>
               </div>
-            ) : (
+            )}
+
+            {error && (
+              <div className="flex items-center gap-3 rounded-xl bg-danger/10 p-4 ring-1 ring-danger/20">
+                <AlertCircle size={18} className="shrink-0 text-danger" />
+                <p className="text-sm text-danger">{error}</p>
+              </div>
+            )}
+
+            {result && (
+              <div className="flex flex-1 flex-col justify-center rounded-2xl bg-card/60 px-5 py-6 ring-1 ring-card-border backdrop-blur-sm animate-fadeIn">
+                <div className="flex items-center gap-3">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-pine/10">
+                    <CheckCircle size={24} className="text-pine" />
+                  </div>
+                  <div className="flex-1">
+                    <span className={`inline-block rounded-full px-3 py-0.5 text-xs font-medium ${MATERIAL_COLORS[result.material] || ""}`}>{result.material}</span>
+                    <p className="mt-1 text-xs text-warm-grey">Confidence: {Math.round(result.confidence * 100)}%</p>
+                  </div>
+                  <div className="text-right">
+                    <p className="font-serif text-lg font-bold text-pine">+{result.pointsAwarded}</p>
+                    <p className="text-xs text-warm-grey">pts</p>
+                  </div>
+                </div>
+                <p className="mt-3 text-xs text-warm-grey">{result.explanation}</p>
+                <p className="mt-2 text-xs text-warm-grey">Total: <span className="font-medium text-fg">{result.totalPoints}</span></p>
+              </div>
+            )}
+
+            {!preview && !loading && !result && !error && (
               <div className="flex flex-1 items-center justify-center rounded-2xl bg-card/40 px-5 py-10 ring-1 ring-card-border backdrop-blur-sm md:py-0">
-                <p className="text-sm text-warm-grey">Upload an image to see results</p>
+                <p className="text-sm text-warm-grey">Upload to see results</p>
               </div>
             )}
           </div>
         </div>
 
-        {/* Recent scans */}
+        {/* Recent */}
         <div className="w-full">
           <h2 className="font-serif text-base font-semibold text-pine md:text-lg">Recent Scans</h2>
           <div className="mt-3 flex flex-col items-center gap-3 rounded-2xl bg-card/50 p-8 text-center ring-1 ring-card-border backdrop-blur-sm md:p-10">
