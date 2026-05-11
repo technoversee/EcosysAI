@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { Leaf, Sparkles } from "lucide-react"
+import { Sparkles } from "lucide-react"
 import { WASTE_FACTS } from "@/lib/constants"
 
 export default function NotificationBanner() {
@@ -15,9 +15,9 @@ export default function NotificationBanner() {
   }, [])
 
   return (
-    <div className="flex items-center gap-2.5 bg-gradient-to-r from-forest/8 via-leaf/6 to-forest/8 px-5 py-2.5 text-sm text-forest dark:text-leaf">
-      <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-forest/10 dark:bg-leaf/10">
-        <Sparkles size={13} />
+    <div className="flex items-center gap-2.5 bg-gradient-to-r from-pine/6 via-pine/3 to-pine/6 px-5 py-2.5 text-sm text-pine">
+      <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-pine/8">
+        <Sparkles size={11} />
       </span>
       <p className="animate-fadeIn truncate font-medium leading-snug">{WASTE_FACTS[index]}</p>
     </div>

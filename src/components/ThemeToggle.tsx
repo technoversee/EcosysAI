@@ -2,14 +2,12 @@
 
 import { useEffect, useState } from "react"
 import { Moon, Sun } from "lucide-react"
-import { cn } from "@/lib/utils"
 
 export default function ThemeToggle() {
   const [dark, setDark] = useState(false)
 
   useEffect(() => {
-    const isDark = document.documentElement.classList.contains("dark")
-    setDark(isDark)
+    setDark(document.documentElement.classList.contains("dark"))
   }, [])
 
   function toggle() {
@@ -21,15 +19,10 @@ export default function ThemeToggle() {
   return (
     <button
       onClick={toggle}
-      className={cn(
-        "flex h-9 w-9 items-center justify-center rounded-xl transition-all duration-200",
-        "text-muted hover:bg-forest/10 hover:text-forest dark:hover:bg-leaf/10 dark:hover:text-leaf"
-      )}
+      className="flex h-8 w-8 items-center justify-center rounded-lg text-warm-grey transition-all duration-200 hover:bg-pine/8 hover:text-pine active:scale-90"
       aria-label="Toggle dark mode"
     >
-      <div className="transition-transform duration-300 active:scale-90">
-        {dark ? <Sun size={17} /> : <Moon size={17} />}
-      </div>
+      {dark ? <Sun size={15} /> : <Moon size={15} />}
     </button>
   )
 }
