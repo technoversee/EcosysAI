@@ -36,7 +36,10 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
             <span className="h-2 w-2 rounded-full bg-success animate-pulse" />
             <span className="text-sm text-warm-grey">System Online</span>
           </div>
-          <ThemeToggle />
+          <div className="flex items-center gap-2">
+            <AuthButton />
+            <ThemeToggle />
+          </div>
         </header>
 
         {/* Mobile/tablet header */}
@@ -45,7 +48,10 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
             <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-gradient-to-br from-pine to-pine-light text-[10px] shadow-sm md:h-8 md:w-8 md:rounded-xl md:text-xs">🌱</span>
             <span className="font-serif text-sm font-semibold tracking-tight text-pine md:text-base">EcosysAI</span>
           </div>
-          <ThemeToggle />
+          <div className="flex items-center gap-2">
+            <AuthButton />
+            <ThemeToggle />
+          </div>
         </header>
 
         <NotificationBanner />
