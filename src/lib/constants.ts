@@ -73,6 +73,17 @@ export const ACHIEVEMENTS = [
   { id: "food", name: "Compost King", desc: "Sort 10 food waste items", icon: "🍎", check: (s: number, p: number, m?: Record<string, number>) => (m?.["Food Waste"] ?? 0) >= 10 },
 ] as const
 
+export const NATURE_BACKGROUNDS = [
+  "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1920&q=80",
+  "https://images.unsplash.com/photo-1470071459604-7a7a0c1f0b9b?w=1920&q=80",
+  "https://images.unsplash.com/photo-1447752875215-b2761acb3c5d?w=1920&q=80",
+  "https://images.unsplash.com/photo-1504198453319-5ce911baf6e5?w=1920&q=80",
+  "https://images.unsplash.com/photo-1532274402911-5a369e4c4bb5?w=1920&q=80",
+  "https://images.unsplash.com/photo-1518173946687-a29c3c7b60b6?w=1920&q=80",
+  "https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=1920&q=80",
+  "https://images.unsplash.com/photo-1518495973-e2f4f5c0c3c0?w=1920&q=80",
+]
+
 export const MATERIAL_INFO: Record<string, { category: string; bin: string; color: string; tips: string[] }> = {
   Plastic: {
     category: "Recyclable",
