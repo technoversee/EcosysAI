@@ -1,6 +1,6 @@
 import { Shield, Check, X } from "lucide-react"
 
-const dummyProofs = Array.from({ length: 3 }).map((_, i) => ({
+const PROOFS = Array.from({ length: 3 }).map((_, i) => ({
   id: i + 1,
   user: `User ${i + 1}`,
   material: ["Plastic", "Glass", "Paper"][i],
@@ -9,43 +9,40 @@ const dummyProofs = Array.from({ length: 3 }).map((_, i) => ({
 
 export default function AdminPage() {
   return (
-    <main className="flex flex-1 flex-col items-center px-4 pb-24 pt-6">
-      <div className="flex w-full max-w-lg flex-col items-center">
-        <div className="flex items-center gap-2">
-          <Shield size={22} className="text-forest dark:text-leaf" />
-          <h1 className="font-serif text-2xl font-semibold text-forest dark:text-leaf">Judge Panel</h1>
+    <main className="page">
+      <div className="page-inner">
+        <div className="w-full">
+          <p className="mb-1 text-xs font-medium text-accent">Admin</p>
+          <h1 className="font-serif text-2xl font-semibold tracking-tight text-primary">Judge Panel</h1>
+          <p className="mt-1 text-sm text-muted">Verify photos & award bonus points</p>
         </div>
-        <p className="mt-1 text-sm text-muted">Verify consistency photos & award bonus points</p>
 
-        {dummyProofs.length === 0 ? (
-          <p className="mt-12 text-center text-sm text-muted">No pending verifications.</p>
+        {PROOFS.length === 0 ? (
+          <div className="w-full card flex flex-col items-center gap-3 p-8 text-center">
+            <p className="text-sm text-muted">No pending verifications.</p>
+          </div>
         ) : (
-          <div className="mt-6 w-full space-y-3">
-            {dummyProofs.map((proof) => (
-              <div
-                key={proof.id}
-                className="rounded-2xl bg-card p-4 shadow-sm ring-1 ring-card-border"
-              >
-                <div className="flex items-center justify-between">
+          <div className="w-full space-y-3">
+            {PROOFS.map((p) => (
+              <div key={p.id} className="card overflow-hidden">
+                <div className="flex items-center justify-between px-4 pt-4 pb-2">
                   <div>
-                    <p className="text-sm font-medium">{proof.user}</p>
-                    <p className="text-xs text-muted">{proof.material} waste — today</p>
+                    <p className="text-sm font-medium">{p.user}</p>
+                    <p className="text-xs text-muted">{p.material} — today</p>
                   </div>
-                  <span className="rounded-full bg-amber-100 px-3 py-1 text-xs font-medium text-amber-800 dark:bg-amber-900/30 dark:text-amber-300">
-                    {proof.status}
-                  </span>
+                  <span className="rounded-full bg-accent/8 px-3 py-1 text-xs font-medium text-accent">{p.status}</span>
                 </div>
 
-                <div className="mt-3 flex aspect-video w-full items-center justify-center rounded-xl bg-sage/10 text-sm text-muted">
-                  [Proof Photo Placeholder]
+                <div className="mx-4 flex aspect-video items-center justify-center rounded-xl bg-primary/6 text-sm text-muted">
+                  [Photo]
                 </div>
 
-                <div className="mt-3 flex gap-2">
-                  <button className="flex flex-1 items-center justify-center gap-1.5 rounded-full bg-success py-2 text-sm font-medium text-white transition-colors hover:bg-green-600">
-                    <Check size={16} /> Approve
+                <div className="flex gap-2 p-4">
+                  <button className="flex flex-1 items-center justify-center gap-1.5 rounded-xl bg-success/85 py-2.5 text-sm font-medium text-white transition-all active:scale-[0.97]">
+                    <Check size={15} /> Approve
                   </button>
-                  <button className="flex flex-1 items-center justify-center gap-1.5 rounded-full border border-card-border py-2 text-sm font-medium text-muted transition-colors hover:bg-danger/10 hover:text-danger">
-                    <X size={16} /> Reject
+                  <button className="flex flex-1 items-center justify-center gap-1.5 rounded-xl border border-border bg-surface/40 py-2.5 text-sm font-medium text-muted transition-all hover:border-danger/25 hover:text-danger active:scale-[0.97]">
+                    <X size={15} /> Reject
                   </button>
                 </div>
               </div>
@@ -53,9 +50,7 @@ export default function AdminPage() {
           </div>
         )}
 
-        <p className="mt-6 text-center text-xs text-muted">
-          Bonus: +5 points per approved proof (once per user per day)
-        </p>
+        <p className="text-xs text-muted">+5 pts per approved proof (once per user per day)</p>
       </div>
     </main>
   )

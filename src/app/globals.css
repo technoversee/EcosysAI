@@ -1,66 +1,147 @@
 @import "tailwindcss";
 
 :root {
-  --background: #faf8f5;
-  --foreground: #3d2b1f;
-  --forest: #2d6a4f;
-  --forest-light: #40916c;
-  --leaf: #52b788;
-  --sage: #95d5b2;
-  --amber: #e9c46a;
-  --earth: #d4a373;
-  --soil: #3d2b1f;
-  --cream: #faf8f5;
-  --deep-forest: #1a3c2a;
-  --card: #ffffff;
-  --card-border: #e8e0d8;
-  --muted: #8a7a6a;
-  --danger: #dc2626;
-  --success: #16a34a;
+  --bg:             #f7f3ef;
+  --fg:             #2b241e;
+  --primary:        #2d4a3e;
+  --primary-light:  #5a7d6b;
+  --accent:         #c48a5a;
+  --accent-soft:    #e8d5c4;
+  --gold:           #d4a05a;
+  --surface:        #ffffff;
+  --border:         #e8e0d8;
+  --muted:          #9c8e82;
+  --glow:           rgba(45, 74, 62, 0.06);
+  --danger:         #c4665a;
+  --success:        #5a9e6f;
 }
 
 .dark {
-  --background: #0d1f16;
-  --foreground: #e8e0d8;
-  --forest: #52b788;
-  --forest-light: #74c69d;
-  --leaf: #95d5b2;
-  --sage: #40916c;
-  --amber: #e9c46a;
-  --earth: #a98467;
-  --soil: #e8e0d8;
-  --cream: #1a3c2a;
-  --deep-forest: #0d1f16;
-  --card: #1a3c2a;
-  --card-border: #2d5a3e;
-  --muted: #95a89a;
-  --danger: #ef4444;
-  --success: #22c55e;
+  --bg:             #121c17;
+  --fg:             #ede6de;
+  --primary:        #7baf8a;
+  --primary-light:  #5a7d6b;
+  --accent:         #c48a5a;
+  --accent-soft:    #2d4a3e;
+  --gold:           #d4a05a;
+  --surface:        #1a2822;
+  --border:         #2d4a3e;
+  --muted:          #8a9e92;
+  --glow:           rgba(123, 175, 138, 0.06);
+  --danger:         #c4665a;
+  --success:        #5a9e6f;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --color-forest: var(--forest);
-  --color-forest-light: var(--forest-light);
-  --color-leaf: var(--leaf);
-  --color-sage: var(--sage);
-  --color-amber: var(--amber);
-  --color-earth: var(--earth);
-  --color-soil: var(--soil);
-  --color-cream: var(--cream);
-  --color-deep-forest: var(--deep-forest);
-  --color-card: var(--card);
-  --color-card-border: var(--card-border);
-  --color-muted: var(--muted);
-  --color-danger: var(--danger);
-  --color-success: var(--success);
-  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --color-bg:            var(--bg);
+  --color-fg:            var(--fg);
+  --color-primary:       var(--primary);
+  --color-primary-light: var(--primary-light);
+  --color-accent:        var(--accent);
+  --color-accent-soft:   var(--accent-soft);
+  --color-gold:          var(--gold);
+  --color-surface:       var(--surface);
+  --color-border:        var(--border);
+  --color-muted:         var(--muted);
+  --color-glow:          var(--glow);
+  --color-danger:        var(--danger);
+  --color-success:       var(--success);
+
+  --font-sans:  "Inter", ui-sans-serif, system-ui, sans-serif;
   --font-serif: "Fraunces", ui-serif, Georgia, serif;
 }
 
+/* ── Reset & Base ─────────────────────────── */
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+}
+
+html {
+  -webkit-tap-highlight-color: transparent;
+}
+
 body {
-  background: var(--background);
-  color: var(--foreground);
+  background: var(--bg);
+  color: var(--fg);
   font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+::selection {
+  background: var(--primary);
+  color: white;
+}
+
+/* ── Utilities ────────────────────────────── */
+
+@utility page {
+  @apply flex flex-1 flex-col items-center px-6 pb-32 pt-8;
+}
+
+@utility page-inner {
+  @apply flex w-full max-w-sm flex-col items-center gap-8;
+}
+
+@utility card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 1.25rem;
+  transition: all 0.2s ease;
+}
+
+@utility card-hover {
+  &:hover {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px var(--glow);
+  }
+}
+
+/* ── Animations ───────────────────────────── */
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-8px); }
+}
+
+@keyframes breathe {
+  0%, 100% { opacity: 0.4; transform: scale(1); }
+  50%      { opacity: 0.7; transform: scale(1.06); }
+}
+
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.95); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+@utility animate-fadeIn {
+  animation: fadeIn 0.5s ease-out both;
+}
+
+@utility animate-fadeUp {
+  animation: fadeUp 0.6s ease-out both;
+}
+
+@utility animate-float {
+  animation: float 5s ease-in-out infinite;
+}
+
+@utility animate-breathe {
+  animation: breathe 6s ease-in-out infinite;
+}
+
+@utility animate-scaleIn {
+  animation: scaleIn 0.4s ease-out both;
 }

@@ -1,45 +1,61 @@
-import { Leaf, Camera, TrendingUp, Users } from "lucide-react"
+import { Camera, Leaf, TrendingUp, Users } from "lucide-react"
 import TreeAnimation from "@/components/TreeAnimation"
 
-const stats = [
-  { icon: Camera, label: "Scans Today", value: "0" },
-  { icon: Leaf, label: "Points Earned", value: "0" },
-  { icon: TrendingUp, label: "Streak", value: "0 days" },
-  { icon: Users, label: "Global Rank", value: "—" },
+const STATS = [
+  { icon: Camera, label: "Scans", value: "0" },
+  { icon: Leaf, label: "Points", value: "0" },
+  { icon: TrendingUp, label: "Streak", value: "0d" },
+  { icon: Users, label: "Rank", value: "—" },
 ]
 
 export default function HomePage() {
   return (
-    <main className="flex flex-1 flex-col items-center px-4 pb-24 pt-6">
-      <div className="flex w-full max-w-lg flex-col items-center">
-        <h1 className="font-serif text-2xl font-semibold text-forest dark:text-leaf">EcosysAI</h1>
-        <p className="mt-1 text-sm text-muted">Scan. Sort. Earn.</p>
-
-        <div className="mt-6 flex w-full flex-col items-center rounded-3xl bg-card p-6 shadow-sm ring-1 ring-card-border">
-          <TreeAnimation points={0} />
-          <p className="mt-2 text-center text-xs text-muted">Keep scanning to grow your tree!</p>
+    <main className="page">
+      <div className="page-inner">
+        {/* hero */}
+        <div className="w-full text-center">
+          <p className="mb-1.5 text-xs font-medium text-accent">Welcome back</p>
+          <h1 className="font-serif text-3xl font-semibold tracking-tight text-primary">
+            Let&apos;s sort some waste
+          </h1>
+          <p className="mt-2 text-sm leading-relaxed text-muted">
+            Scan any item to learn how to dispose it correctly and earn points.
+          </p>
         </div>
 
-        <div className="mt-6 grid w-full grid-cols-2 gap-3">
-          {stats.map(({ icon: Icon, label, value }) => (
-            <div
-              key={label}
-              className="flex flex-col items-center gap-1 rounded-2xl bg-card p-4 shadow-sm ring-1 ring-card-border"
-            >
-              <Icon size={20} className="text-forest dark:text-leaf" />
-              <span className="font-serif text-xl font-semibold">{value}</span>
-              <span className="text-xs text-muted">{label}</span>
+        {/* tree */}
+        <div className="w-full card p-6">
+          <div className="flex flex-col items-center">
+            <TreeAnimation points={0} />
+            <p className="mt-2 text-xs text-muted">0 / 50 pts → Sprout</p>
+            <div className="mt-3 h-1 w-full max-w-32 rounded-full bg-primary/8">
+              <div className="h-full w-0 rounded-full bg-gradient-to-r from-accent to-primary transition-all duration-700" />
+            </div>
+          </div>
+        </div>
+
+        {/* stats */}
+        <div className="grid w-full grid-cols-4 gap-2">
+          {STATS.map(({ icon: Icon, label, value }) => (
+            <div key={label} className="card flex flex-col items-center gap-1 px-2 py-3">
+              <Icon size={15} className="text-primary" />
+              <span className="font-serif text-base font-semibold">{value}</span>
+              <span className="text-[10px] text-muted">{label}</span>
             </div>
           ))}
         </div>
 
-        <a
-          href="/scan"
-          className="mt-6 flex w-full items-center justify-center gap-2 rounded-full bg-forest px-6 py-3 font-medium text-white shadow-lg transition-all hover:bg-forest-light active:scale-[0.98]"
-        >
-          <Camera size={20} />
-          Scan Waste
-        </a>
+        {/* actions */}
+        <div className="flex w-full gap-3">
+          <a href="/scan" className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-primary px-5 py-3 text-sm font-medium text-white shadow-sm transition-all active:scale-[0.97]">
+            <Camera size={17} />
+            Scan
+          </a>
+          <a href="/leaderboard" className="flex flex-1 items-center justify-center gap-2 rounded-xl border border-border px-5 py-3 text-sm font-medium text-primary transition-all active:scale-[0.97]">
+            <Users size={17} />
+            Rankings
+          </a>
+        </div>
       </div>
     </main>
   )
