@@ -47,23 +47,31 @@ const groups: SettingGroup[] = [
   },
 ]
 
+function computeInitial(): Record<string, boolean> {
+  if (typeof window === "undefined") return {}
+  const saved = localStorage.getItem("ecosort-settings")
+  const initial: Record<string, boolean> = {}
+  for (const group of groups) {
+    for (const item of group.items) {
+      initial[item.id] = item.defaultOn
+    }
+  }
+  return saved ? { ...initial, ...JSON.parse(saved) } : initial
+}
+
 function useSettings() {
-  const [settings, setSettings] = useState<Record<string, boolean>>({})
+  const [settings, setSettings] = useState<Record<string, boolean>>(computeInitial)
 
   useEffect(() => {
-    const saved = localStorage.getItem("ecosort-settings")
-    const initial: Record<string, boolean> = {}
-    for (const group of groups) {
-      for (const item of group.items) {
-        initial[item.id] = item.defaultOn
-      }
-    }
-    const parsed = saved ? { ...initial, ...JSON.parse(saved) } : initial
-    setSettings(parsed)
-    if (parsed.darkMode) {
+    if (settings.darkMode) {
       document.documentElement.classList.add("dark")
+      localStorage.setItem("ecosort-theme", "dark")
+    } else {
+      document.documentElement.classList.remove("dark")
+      localStorage.setItem("ecosort-theme", "light")
     }
-  }, [])
+    localStorage.setItem("ecosort-settings", JSON.stringify(settings))
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   function toggle(id: string) {
     setSettings((prev) => {
@@ -112,11 +120,7 @@ export default function SettingsPage() {
         ))}
 
         <button
-          onClick={() => {
-            localStorage.removeItem("ecosort-token")
-            localStorage.removeItem("ecosort-user")
-            signOut({ callbackUrl: "/" })
-          }}
+          onClick={() => signOut({ callbackUrl: "/" })}
           style={{
             width: "100%", marginTop: 16, padding: 14,
             border: "1.5px solid var(--grey-200)", borderRadius: 10,
