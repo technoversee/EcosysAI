@@ -90,7 +90,3 @@ src/
 | `npm run lint` | Check for lint issues |
 | `start.bat` | Launch the app (Windows) |
 | `stop.bat` | Kill the server (Windows) |
-
----
-
-Made in a hurry for a hackathon. Probably has bugs. Use at your own risk 🌱
