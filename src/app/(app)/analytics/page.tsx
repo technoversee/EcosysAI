@@ -1,8 +1,17 @@
 "use client"
 
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 
-function useCounterAnimation() {
+interface LeaderUser {
+  id: string
+  name: string
+  email: string
+  image: string
+  points: number
+  scans: number
+}
+
+function useCounterAnimation(deps: unknown[]) {
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
@@ -30,7 +39,7 @@ function useCounterAnimation() {
     )
     document.querySelectorAll(".counter").forEach((el) => observer.observe(el))
     return () => observer.disconnect()
-  }, [])
+  }, deps)
 }
 
 const activityData = [30, 45, 22, 58, 41, 63, 37]
@@ -52,7 +61,20 @@ const tips = [
 ]
 
 export default function AnalyticsPage() {
-  useCounterAnimation()
+  const [leaderboard, setLeaderboard] = useState<LeaderUser[]>([])
+
+  useEffect(() => {
+    fetch("/api/leaderboard")
+      .then((r) => r.json())
+      .then((data) => setLeaderboard(data.users ?? []))
+      .catch(() => {})
+  }, [])
+
+  const totalScans = leaderboard.reduce((sum, u) => sum + u.scans, 0)
+  const totalPoints = leaderboard.reduce((sum, u) => sum + u.points, 0)
+  const co2Reduction = totalPoints > 0 ? (totalPoints / 10).toFixed(1) : "0.0"
+
+  useCounterAnimation([leaderboard])
 
   return (
     <>
@@ -68,7 +90,7 @@ export default function AnalyticsPage() {
               <line x1="12" y1="22.08" x2="12" y2="12" />
             </svg>
           </div>
-          <div className="stat-value"><span className="counter" data-target="1284" data-suffix=" kg">0</span></div>
+          <div className="stat-value"><span className="counter" data-target={totalScans} data-suffix=" kg">0</span></div>
           <div className="stat-label">Total Waste Recycled</div>
         </div>
         <div className="stat-card">
@@ -77,7 +99,7 @@ export default function AnalyticsPage() {
               <circle cx="12" cy="12" r="10" /><path d="M12 2a15 15 0 0 1 0 20 15 15 0 0 1 0-20z" />
             </svg>
           </div>
-          <div className="stat-value"><span className="counter" data-target="47.2" data-decimals="1" data-suffix=" kg">0</span></div>
+          <div className="stat-value"><span className="counter" data-target={co2Reduction} data-decimals="1" data-suffix=" kg">0</span></div>
           <div className="stat-label">CO\u2082 Reduction</div>
         </div>
         <div className="stat-card">

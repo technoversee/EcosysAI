@@ -53,12 +53,8 @@ function greeting(): string {
   return "Good Evening"
 }
 
-const MOCK_ACTIVITY: ActivityItem[] = [
-  { title: "Scanned Plastic Bottle", time: "2 min ago", points: "+15", dot: "green" },
-  { title: "Eco Hero Badge Unlocked", time: "1 hour ago", points: "+100 XP", dot: "mint" },
-  { title: "Redeemed Free Coffee Coupon", time: "3 hours ago", points: "-200", dot: "orange" },
-  { title: "Scanned Aluminum Can", time: "5 hours ago", points: "+10", dot: "green" },
-  { title: "Recycling Streak: 7 Days", time: "Yesterday", points: "+50", dot: "blue" },
+const EMPTY_ACTIVITY: ActivityItem[] = [
+  { title: "No activity yet", time: "Start scanning to see your activity", points: "", dot: "mint" },
 ]
 
 const ACHIEVEMENTS: Achievement[] = [
@@ -262,7 +258,7 @@ export default function DashboardPage() {
             <span className="card-title">Recent Activity</span>
             <span className="card-link">View All</span>
           </div>
-          {MOCK_ACTIVITY.map((a, i) => (
+          {EMPTY_ACTIVITY.map((a, i) => (
             <div key={i} className="activity-item">
               <div className={`activity-dot ${a.dot}`} />
               <div className="activity-content">

@@ -146,15 +146,12 @@ export default function AuthPage() {
 
   // Login form state
   const [loginEmail, setLoginEmail] = useState("")
-  const [loginPassword, setLoginPassword] = useState("")
   const [loginError, setLoginError] = useState("")
   const [loginLoading, setLoginLoading] = useState(false)
 
   // Signup form state
   const [signupName, setSignupName] = useState("")
   const [signupEmail, setSignupEmail] = useState("")
-  const [signupPassword, setSignupPassword] = useState("")
-  const [signupConfirm, setSignupConfirm] = useState("")
   const [signupError, setSignupError] = useState("")
   const [signupLoading, setSignupLoading] = useState(false)
 
@@ -184,19 +181,18 @@ export default function AuthPage() {
   async function handleLogin(e: FormEvent) {
     e.preventDefault()
     setLoginError("")
-    if (!loginEmail || !loginPassword) {
-      setLoginError("Please fill in all fields")
+    if (!loginEmail) {
+      setLoginError("Please enter your email")
       return
     }
     setLoginLoading(true)
     try {
       const res = await signIn("credentials", {
         email: loginEmail,
-        password: loginPassword,
         redirect: false,
       })
       if (res?.error) {
-        setLoginError("Invalid email or password")
+        setLoginError("Invalid email")
       } else {
         router.push("/")
         router.refresh()
@@ -212,39 +208,19 @@ export default function AuthPage() {
   async function handleSignup(e: FormEvent) {
     e.preventDefault()
     setSignupError("")
-    if (!signupName || !signupEmail || !signupPassword || !signupConfirm) {
+    if (!signupName || !signupEmail) {
       setSignupError("Please fill in all fields")
-      return
-    }
-    if (signupPassword !== signupConfirm) {
-      setSignupError("Passwords do not match")
-      return
-    }
-    if (signupPassword.length < 6) {
-      setSignupError("Password must be at least 6 characters")
       return
     }
     setSignupLoading(true)
     try {
-      const res = await fetch("/api/auth/signup", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name: signupName, email: signupEmail, password: signupPassword }),
-      })
-      const data = await res.json()
-      if (!res.ok) {
-        setSignupError(data.message || "Signup failed")
-        return
-      }
-      // Auto-login after signup
-      const signInRes = await signIn("credentials", {
+      const res = await signIn("credentials", {
         email: signupEmail,
-        password: signupPassword,
+        name: signupName,
         redirect: false,
       })
-      if (signInRes?.error) {
-        setSignupError("Account created but sign-in failed. Please log in.")
-        switchForm("login")
+      if (res?.error) {
+        setSignupError("Signup failed. Please try again.")
       } else {
         router.push("/")
         router.refresh()
@@ -491,29 +467,7 @@ export default function AuthPage() {
                     }}
                   />
                 </div>
-                <div className="input-group">
-                  <label style={{ display: "block", fontSize: 13, fontWeight: 500, color: "var(--label-color)", marginBottom: 6 }}>Password</label>
-                  <input
-                    type="password"
-                    placeholder="Enter your password"
-                    required
-                    value={loginPassword}
-                    onChange={(e) => setLoginPassword(e.target.value)}
-                    style={{
-                      width: "100%", padding: "14px 16px", fontSize: 15, fontFamily: "inherit",
-                      color: "var(--grey-800)", background: "var(--input-bg)",
-                      border: "1.5px solid var(--input-border)", borderRadius: "var(--radius-sm)",
-                      outline: "none", boxSizing: "border-box",
-                    }}
-                  />
-                </div>
-                <div className="form-row" style={{ display: "flex", alignItems: "center", justifyContent: "space-between", fontSize: 14 }}>
-                  <label style={{ display: "flex", alignItems: "center", gap: 8, color: "var(--grey-500)", cursor: "pointer" }}>
-                    <input type="checkbox" defaultChecked style={{ width: 16, height: 16, accentColor: "var(--emerald)" }} />
-                    Remember me
-                  </label>
-                  <a href="#" style={{ color: "var(--switch-link)", fontWeight: 500, textDecoration: "none" }}>Forgot Password?</a>
-                </div>
+
                 {loginError && (
                   <div style={{ color: "var(--error-color)", fontSize: 13 }}>{loginError}</div>
                 )}
@@ -626,38 +580,7 @@ export default function AuthPage() {
                     }}
                   />
                 </div>
-                <div className="input-group">
-                  <label style={{ display: "block", fontSize: 13, fontWeight: 500, color: "var(--label-color)", marginBottom: 6 }}>Password</label>
-                  <input
-                    type="password"
-                    placeholder="Create a strong password"
-                    required
-                    value={signupPassword}
-                    onChange={(e) => setSignupPassword(e.target.value)}
-                    style={{
-                      width: "100%", padding: "14px 16px", fontSize: 15, fontFamily: "inherit",
-                      color: "var(--grey-800)", background: "var(--input-bg)",
-                      border: "1.5px solid var(--input-border)", borderRadius: "var(--radius-sm)",
-                      outline: "none", boxSizing: "border-box",
-                    }}
-                  />
-                </div>
-                <div className="input-group">
-                  <label style={{ display: "block", fontSize: 13, fontWeight: 500, color: "var(--label-color)", marginBottom: 6 }}>Confirm Password</label>
-                  <input
-                    type="password"
-                    placeholder="Confirm your password"
-                    required
-                    value={signupConfirm}
-                    onChange={(e) => setSignupConfirm(e.target.value)}
-                    style={{
-                      width: "100%", padding: "14px 16px", fontSize: 15, fontFamily: "inherit",
-                      color: "var(--grey-800)", background: "var(--input-bg)",
-                      border: "1.5px solid var(--input-border)", borderRadius: "var(--radius-sm)",
-                      outline: "none", boxSizing: "border-box",
-                    }}
-                  />
-                </div>
+
                 {signupError && (
                   <div style={{ color: "var(--error-color)", fontSize: 13 }}>{signupError}</div>
                 )}

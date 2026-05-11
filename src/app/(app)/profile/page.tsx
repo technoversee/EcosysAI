@@ -1,9 +1,18 @@
 "use client"
 
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import { useSession, signOut } from "next-auth/react"
 
-function useCounterAnimation() {
+interface LeaderUser {
+  id: string
+  name: string
+  email: string
+  image: string
+  points: number
+  scans: number
+}
+
+function useCounterAnimation(deps: unknown[]) {
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
@@ -29,7 +38,7 @@ function useCounterAnimation() {
     )
     document.querySelectorAll(".counter").forEach((el) => observer.observe(el))
     return () => observer.disconnect()
-  }, [])
+  }, deps)
 }
 
 const achievements = [
@@ -59,8 +68,25 @@ function getInitials(name: string) {
 }
 
 export default function ProfilePage() {
-  useCounterAnimation()
   const { data: session } = useSession()
+  const [leaderboard, setLeaderboard] = useState<LeaderUser[]>([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    fetch("/api/leaderboard")
+      .then((r) => r.json())
+      .then((data) => setLeaderboard(data.users ?? []))
+      .catch(() => {})
+      .finally(() => setLoading(false))
+  }, [])
+
+  useCounterAnimation([loading, leaderboard])
+
+  const currentUser = leaderboard.find((u) => u.id === session?.user?.id)
+  const ecoPoints = currentUser?.points ?? 0
+  const xp = Math.floor(ecoPoints * 2.5)
+  const foundIndex = currentUser ? leaderboard.findIndex((u) => u.id === currentUser.id) : -1
+  const rank = foundIndex >= 0 ? foundIndex + 1 : null
 
   const name = session?.user?.name || "User"
   const email = session?.user?.email || "user@ecosys.ai"
@@ -75,15 +101,15 @@ export default function ProfilePage() {
 
       <div className="profile-stats">
         <div className="profile-stat">
-          <div className="ps-value"><span className="counter" data-target="1240">0</span></div>
+          <div className="ps-value"><span className="counter" data-target={ecoPoints}>0</span></div>
           <div className="ps-label">EcoPoints</div>
         </div>
         <div className="profile-stat">
-          <div className="ps-value"><span className="counter" data-target="3450">0</span></div>
+          <div className="ps-value"><span className="counter" data-target={xp}>0</span></div>
           <div className="ps-label">XP</div>
         </div>
         <div className="profile-stat">
-          <div className="ps-value">#3</div>
+          <div className="ps-value">{rank != null ? `#${rank}` : "N/A"}</div>
           <div className="ps-label">Rank</div>
         </div>
       </div>

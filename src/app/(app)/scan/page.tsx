@@ -42,10 +42,8 @@ export default function ScanPage() {
         throw new Error(err.error || "Classification failed")
       }
       const data = await res.json()
-      setTimeout(() => {
-        setResult(data)
-        setScanning(false)
-      }, 2500)
+      setResult(data)
+      setScanning(false)
     } catch (err: any) {
       setError(err.message)
       setScanning(false)
