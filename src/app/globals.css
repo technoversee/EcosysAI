@@ -88,6 +88,17 @@
   --muted: #8a7a6a;
   --danger: #dc2626;
   --success: #16a34a;
+  --auth-bg: linear-gradient(160deg, #f0f7f0 0%, #e8f5e9 100%);
+  --ring-glow-auth: radial-gradient(circle, rgba(45,106,79,0.08) 0%, rgba(163,217,177,0.04) 60%, transparent 100%);
+  --label-color: var(--grey-700);
+  --error-color: #e74c3c;
+  --switch-color: var(--grey-500);
+  --switch-link: var(--emerald);
+  --divider-color: var(--grey-200);
+  --input-focus-border: rgba(45,106,79,0.3);
+  --input-focus-shadow: 0 0 0 3px rgba(45,106,79,0.08);
+  --social-hover-bg: rgba(45,106,79,0.08);
+  --social-hover-border: rgba(45,106,79,0.12);
 }
 
 [data-theme="dark"] {
@@ -170,6 +181,17 @@
   --muted: #95a89a;
   --danger: #ef4444;
   --success: #22c55e;
+  --auth-bg: linear-gradient(160deg, #0a120a 0%, #0d1a0d 100%);
+  --ring-glow-auth: radial-gradient(circle, rgba(82,183,136,0.1) 0%, rgba(45,106,79,0.05) 60%, transparent 100%);
+  --label-color: var(--grey-600);
+  --error-color: #e74c3c;
+  --switch-color: var(--grey-500);
+  --switch-link: var(--emerald);
+  --divider-color: var(--grey-300);
+  --input-focus-border: rgba(82,183,136,0.3);
+  --input-focus-shadow: 0 0 0 3px rgba(82,183,136,0.1);
+  --social-hover-bg: rgba(82,183,136,0.1);
+  --social-hover-border: rgba(82,183,136,0.15);
 }
 
 .dark {
@@ -252,6 +274,17 @@
   --muted: #95a89a;
   --danger: #ef4444;
   --success: #22c55e;
+  --auth-bg: linear-gradient(160deg, #0a120a 0%, #0d1a0d 100%);
+  --ring-glow-auth: radial-gradient(circle, rgba(82,183,136,0.1) 0%, rgba(45,106,79,0.05) 60%, transparent 100%);
+  --label-color: var(--grey-600);
+  --error-color: #e74c3c;
+  --switch-color: var(--grey-500);
+  --switch-link: var(--emerald);
+  --divider-color: var(--grey-300);
+  --input-focus-border: rgba(82,183,136,0.3);
+  --input-focus-shadow: 0 0 0 3px rgba(82,183,136,0.1);
+  --social-hover-bg: rgba(82,183,136,0.1);
+  --social-hover-border: rgba(82,183,136,0.15);
 }
 
 @theme inline {
@@ -279,11 +312,10 @@
 html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
 body {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-  background: var(--bg);
+  background: var(--background);
   color: var(--grey-800);
   overflow-x: hidden;
   line-height: 1.5;
-  transition: background 0.4s, color 0.4s;
 }
 a { text-decoration: none; color: inherit; }
 img { max-width: 100%; display: block; }
