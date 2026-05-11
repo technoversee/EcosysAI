@@ -1,4 +1,4 @@
-import { Leaf, Camera, TrendingUp, Users, Sparkles } from "lucide-react"
+import { Camera, Leaf, TrendingUp, Users, Sparkles } from "lucide-react"
 import TreeAnimation from "@/components/TreeAnimation"
 
 const stats = [
@@ -10,45 +10,53 @@ const stats = [
 
 export default function HomePage() {
   return (
-    <main className="flex flex-1 flex-col items-center px-5 pb-28 pt-4">
-      <div className="flex w-full max-w-lg flex-col items-center">
+    <main className="flex flex-1 flex-col items-center px-5 pb-28 pt-6">
+      <div className="flex w-full max-w-md flex-col items-center gap-6">
         {/* Hero */}
-        <div className="relative w-full overflow-hidden rounded-3xl bg-gradient-to-b from-forest/10 via-forest/5 to-transparent p-8 text-center">
-          <div className="absolute -right-8 -top-8 h-32 w-32 rounded-full bg-forest/5 blur-3xl" />
-          <div className="absolute -bottom-6 -left-6 h-24 w-24 rounded-full bg-amber/10 blur-2xl" />
+        <div className="relative w-full rounded-2xl bg-gradient-to-br from-pine/8 via-sand to-transparent px-6 py-8">
+          <div className="absolute -right-6 -top-6 h-36 w-36 rounded-full bg-clay/8 blur-3xl" />
+          <div className="absolute -bottom-4 -left-4 h-24 w-24 rounded-full bg-pine/6 blur-2xl" />
           <div className="relative">
-            <div className="mx-auto mb-2 flex h-10 w-10 items-center justify-center rounded-2xl bg-forest/10 dark:bg-leaf/10">
-              <Sparkles size={18} className="text-forest dark:text-leaf" />
+            <div className="mb-3 inline-flex items-center gap-2 rounded-full bg-pine/8 px-3.5 py-1.5 text-xs font-medium text-pine">
+              <span className="h-1.5 w-1.5 rounded-full bg-pine" />
+              Start your journey
             </div>
-            <h1 className="font-serif text-3xl font-semibold tracking-tight text-forest dark:text-leaf">
-              EcosysAI
+            <h1 className="font-serif text-[1.65rem] leading-tight font-semibold tracking-tight text-pine">
+              Scan waste,
+              <br />
+              <span className="text-clay">earn points</span>, grow nature
             </h1>
-            <p className="mt-1.5 text-sm text-muted">Scan waste, earn points, grow your tree</p>
+            <p className="mt-2 text-sm leading-relaxed text-warm-grey">
+            Every item you sort correctly brings us closer to a cleaner planet.
+            </p>
           </div>
         </div>
 
-        {/* Tree */}
-        <div className="relative mt-6 w-full overflow-hidden rounded-3xl bg-card/70 p-6 text-center shadow-sm ring-1 ring-card-border backdrop-blur-lg">
-          <div className="absolute -left-4 -top-4 h-20 w-20 rounded-full bg-leaf/5 blur-xl" />
-          <TreeAnimation points={0} />
-          <p className="mt-2 text-xs text-muted">0 / 50 points to reach Sprout</p>
-          <div className="mt-3 h-1.5 w-full overflow-hidden rounded-full bg-sage/20">
-            <div className="h-full w-0 rounded-full bg-gradient-to-r from-sage to-forest transition-all duration-700" />
+        {/* Tree Card */}
+        <div className="relative w-full rounded-2xl bg-card/70 px-5 py-6 ring-1 ring-card-border backdrop-blur-lg">
+          <div className="absolute -left-3 -top-3 h-16 w-16 rounded-full bg-pine/5 blur-xl" />
+          <div className="relative flex flex-col items-center">
+            <TreeAnimation points={0} />
+            <p className="mt-1 text-xs text-warm-grey">0 / 50 points to reach Sprout</p>
+            <div className="mt-3 h-1.5 w-full max-w-40 overflow-hidden rounded-full bg-sage/15">
+              <div className="h-full w-0 rounded-full bg-gradient-to-r from-sage to-pine transition-all duration-700" />
+            </div>
           </div>
         </div>
 
-        {/* Stats */}
-        <div className="mt-5 grid w-full grid-cols-2 gap-3">
-          {stats.map(({ icon: Icon, label, value }) => (
+        {/* Stats Grid */}
+        <div className="grid w-full grid-cols-2 gap-3">
+          {stats.map(({ icon: Icon, label, value }, i) => (
             <div
               key={label}
-              className="flex flex-col items-center gap-1.5 rounded-2xl bg-card/70 p-4 shadow-sm ring-1 ring-card-border backdrop-blur-lg transition-all duration-200 hover:ring-forest/20"
+              className="group rounded-2xl bg-card/70 px-4 py-4 ring-1 ring-card-border backdrop-blur-lg transition-all duration-200 hover:ring-pine/15"
+              style={{ animationDelay: `${i * 80}ms` }}
             >
-              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-forest/10 dark:bg-leaf/10">
-                <Icon size={18} className="text-forest dark:text-leaf" />
+              <div className="mb-2.5 inline-flex h-8 w-8 items-center justify-center rounded-lg bg-pine/8">
+                <Icon size={16} className="text-pine" />
               </div>
-              <span className="font-serif text-2xl font-bold tracking-tight">{value}</span>
-              <span className="text-xs text-muted">{label}</span>
+              <div className="font-serif text-xl font-semibold tracking-tight">{value}</div>
+              <div className="mt-0.5 text-xs text-warm-grey">{label}</div>
             </div>
           ))}
         </div>
@@ -56,10 +64,10 @@ export default function HomePage() {
         {/* CTA */}
         <a
           href="/scan"
-          className="group relative mt-6 flex w-full items-center justify-center gap-2.5 overflow-hidden rounded-full bg-forest px-6 py-3.5 font-medium text-white shadow-lg transition-all duration-200 hover:bg-forest-light active:scale-[0.98]"
+          className="group relative inline-flex w-full items-center justify-center gap-2.5 overflow-hidden rounded-xl bg-pine px-5 py-3.5 text-sm font-medium text-white shadow-sm transition-all duration-200 hover:bg-pine-light active:scale-[0.98]"
         >
-          <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/8 to-transparent opacity-0 transition-opacity group-hover:opacity-100" />
-          <Camera size={20} />
+          <span className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/8 to-white/0 opacity-0 transition-opacity group-hover:opacity-100" />
+          <Camera size={18} />
           Scan Waste Now
         </a>
       </div>
