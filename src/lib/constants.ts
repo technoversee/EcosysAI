@@ -40,18 +40,65 @@ export const WASTE_FACTS = [
 ]
 
 export const REWARDS = [
-  { id: 1, name: "Coffee Discount", cost: 50, emoji: "☕", description: "50% off your next coffee" },
-  { id: 2, name: "Eco Tote Bag", cost: 100, emoji: "👜", description: "Reusable organic cotton tote" },
-  { id: 3, name: "Plant Sapling", cost: 150, emoji: "🌱", description: "A real sapling planted in your name" },
-  { id: 4, name: "Eco T-Shirt", cost: 200, emoji: "👕", description: "Organic cotton eco-awareness tee" },
-  { id: 5, name: "Bamboo Utensils", cost: 250, emoji: "🥢", description: "Portable bamboo cutlery set" },
-  { id: 6, name: "Reusable Water Bottle", cost: 300, emoji: "🧴", description: "Stainless steel insulated bottle" },
+  { id: 1, name: "Recycled Notebook", cost: 30, emoji: "📓", description: "A5 notebook made from 100% post-consumer recycled paper" },
+  { id: 2, name: "Bamboo Toothbrush Set", cost: 50, emoji: "🪥", description: "Set of 4 biodegradable bamboo toothbrushes" },
+  { id: 3, name: "Reusable Produce Bags", cost: 75, emoji: "🛍️", description: "Set of 5 mesh produce bags, washable and plastic-free" },
+  { id: 4, name: "Seed Bomb Pack", cost: 100, emoji: "🌸", description: "10 wildflower seed bombs for guerilla gardening" },
+  { id: 5, name: "Stainless Steel Straw Set", cost: 120, emoji: "🥤", description: "4 stainless steel straws with cleaning brush" },
+  { id: 6, name: "Beeswax Food Wraps", cost: 150, emoji: "🍯", description: "3-pack reusable beeswax wraps, assorted sizes" },
+  { id: 7, name: "Solar Power Bank", cost: 200, emoji: "🔋", description: "10,000mAh solar-powered portable charger" },
+  { id: 8, name: "Compost Starter Kit", cost: 250, emoji: "🌱", description: "Countertop compost bin + starter bacteria pack" },
+  { id: 9, name: "Reusable Water Bottle", cost: 300, emoji: "🧴", description: "Double-wall insulated stainless steel, 750ml" },
+  { id: 10, name: "Eco Tote Bag", cost: 100, emoji: "👜", description: "Organic cotton tote, hand-printed with eco designs" },
+  { id: 11, name: "Bamboo Cutlery Set", cost: 80, emoji: "🥢", description: "Portable bamboo fork, knife, spoon, chopsticks + case" },
+  { id: 12, name: "Tree Planted in Your Name", cost: 500, emoji: "🌳", description: "We plant a native tree in your honor + GPS coordinates" },
 ] as const
 
-export const MATERIAL_COLORS: Record<Material, { bg: string; text: string; badge: string }> = {
-  Plastic: { bg: "bg-amber-100 dark:bg-amber-900/30", text: "text-amber-800 dark:text-amber-300", badge: "bg-amber-500" },
-  Metal: { bg: "bg-slate-100 dark:bg-slate-800/40", text: "text-slate-700 dark:text-slate-300", badge: "bg-slate-500" },
-  Glass: { bg: "bg-cyan-100 dark:bg-cyan-900/30", text: "text-cyan-800 dark:text-cyan-300", badge: "bg-cyan-500" },
-  Paper: { bg: "bg-blue-100 dark:bg-blue-900/30", text: "text-blue-800 dark:text-blue-300", badge: "bg-blue-500" },
-  "Food Waste": { bg: "bg-green-100 dark:bg-green-900/30", text: "text-green-800 dark:text-green-300", badge: "bg-green-600" },
+export const ACHIEVEMENTS = [
+  { id: "first_scan", name: "First Step", desc: "Complete your first waste scan", icon: "🌱", check: (s: number, p: number) => s >= 1 },
+  { id: "scout", name: "Eco Scout", desc: "Scan 10 items", icon: "🔍", check: (s: number) => s >= 10 },
+  { id: "recycler", name: "Dedicated Recycler", desc: "Scan 50 items", icon: "♻️", check: (s: number) => s >= 50 },
+  { id: "master", name: "Waste Master", desc: "Scan 100 items", icon: "🏆", check: (s: number) => s >= 100 },
+  { id: "legend", name: "Recycling Legend", desc: "Scan 500 items", icon: "👑", check: (s: number) => s >= 500 },
+  { id: "points_100", name: "Point Collector", desc: "Earn 100 EcoPoints", icon: "⭐", check: (s: number, p: number) => p >= 100 },
+  { id: "points_500", name: "Eco Saver", desc: "Earn 500 EcoPoints", icon: "💎", check: (s: number, p: number) => p >= 500 },
+  { id: "points_1000", name: "Green Investor", desc: "Earn 1,000 EcoPoints", icon: "🌿", check: (s: number, p: number) => p >= 1000 },
+  { id: "plastic", name: "Plastic Warrior", desc: "Recycle 10 plastic items", icon: "🛡️", check: (s: number, p: number, m?: Record<string, number>) => (m?.Plastic ?? 0) >= 10 },
+  { id: "paper", name: "Paper Saver", desc: "Recycle 10 paper items", icon: "📄", check: (s: number, p: number, m?: Record<string, number>) => (m?.Paper ?? 0) >= 10 },
+  { id: "glass", name: "Glass Guardian", desc: "Recycle 10 glass items", icon: "🫙", check: (s: number, p: number, m?: Record<string, number>) => (m?.Glass ?? 0) >= 10 },
+  { id: "metal", name: "Metal Miner", desc: "Recycle 10 metal items", icon: "⚙️", check: (s: number, p: number, m?: Record<string, number>) => (m?.Metal ?? 0) >= 10 },
+  { id: "food", name: "Compost King", desc: "Sort 10 food waste items", icon: "🍎", check: (s: number, p: number, m?: Record<string, number>) => (m?.["Food Waste"] ?? 0) >= 10 },
+] as const
+
+export const MATERIAL_INFO: Record<string, { category: string; bin: string; color: string; tips: string[] }> = {
+  Plastic: {
+    category: "Recyclable",
+    bin: "Blue Bin",
+    color: "#f59e0b",
+    tips: ["Rinse before recycling", "Remove caps and labels", "Flatten bottles to save space", "Check for resin code #1 or #2"],
+  },
+  Metal: {
+    category: "Recyclable",
+    bin: "Blue Bin",
+    color: "#64748b",
+    tips: ["Rinse food cans thoroughly", "Aluminum foil can be recycled if clean", "Cans can be crushed to save space", "Remove any plastic liners"],
+  },
+  Glass: {
+    category: "Recyclable",
+    bin: "Blue Bin",
+    color: "#06b6d4",
+    tips: ["Rinse bottles and jars", "Remove lids and corks", "Separate by color if your facility requires it", "Never recycle broken windows or mirrors"],
+  },
+  Paper: {
+    category: "Recyclable",
+    bin: "Blue Bin",
+    color: "#3b82f6",
+    tips: ["Keep dry and clean", "Remove plastic windows from envelopes", "Flatten cardboard boxes", "Shred sensitive documents first"],
+  },
+  "Food Waste": {
+    category: "Compostable",
+    bin: "Green Bin",
+    color: "#16a34a",
+    tips: ["Use a countertop compost bin", "Avoid meat and dairy in home compost", "Coffee grounds make excellent compost", "Eggshells add calcium to compost"],
+  },
 }
