@@ -1,66 +1,177 @@
 @import "tailwindcss";
 
 :root {
-  --background: #faf8f5;
-  --foreground: #3d2b1f;
-  --forest: #2d6a4f;
-  --forest-light: #40916c;
-  --leaf: #52b788;
-  --sage: #95d5b2;
-  --amber: #e9c46a;
-  --earth: #d4a373;
-  --soil: #3d2b1f;
-  --cream: #faf8f5;
-  --deep-forest: #1a3c2a;
-  --card: #ffffff;
-  --card-border: #e8e0d8;
-  --muted: #8a7a6a;
-  --danger: #dc2626;
-  --success: #16a34a;
+  --bg:           #f4ede4;
+  --fg:           #2b2520;
+  --pine:         #2f4b3c;
+  --pine-light:   #4a7c5f;
+  --sage:         #6b8f7c;
+  --sage-light:   #b7d2c1;
+  --clay:         #c48a5a;
+  --clay-light:   #ddb892;
+  --honey:        #d4a05a;
+  --honey-light:  #e8c896;
+  --sand:         #ede0d4;
+  --espresso:     #2b2520;
+  --warm-grey:    #8c7c6e;
+  --card:         rgba(255, 252, 248, 0.78);
+  --card-border:  rgba(47, 75, 60, 0.08);
+  --glow:         rgba(47, 75, 60, 0.06);
+  --success:      #5a9e6f;
+  --danger:       #c4665a;
 }
 
 .dark {
-  --background: #0d1f16;
-  --foreground: #e8e0d8;
-  --forest: #52b788;
-  --forest-light: #74c69d;
-  --leaf: #95d5b2;
-  --sage: #40916c;
-  --amber: #e9c46a;
-  --earth: #a98467;
-  --soil: #e8e0d8;
-  --cream: #1a3c2a;
-  --deep-forest: #0d1f16;
-  --card: #1a3c2a;
-  --card-border: #2d5a3e;
-  --muted: #95a89a;
-  --danger: #ef4444;
-  --success: #22c55e;
+  --bg:           #141c18;
+  --fg:           #e8e0d8;
+  --pine:         #7baf8a;
+  --pine-light:   #95d5b2;
+  --sage:         #4a7c5f;
+  --sage-light:   #2f4b3c;
+  --clay:         #c48a5a;
+  --clay-light:   #a67c56;
+  --honey:        #d4a05a;
+  --honey-light:  #b8895a;
+  --sand:         #2b352e;
+  --espresso:     #e8e0d8;
+  --warm-grey:    #8a9e92;
+  --card:         rgba(20, 28, 24, 0.82);
+  --card-border:  rgba(123, 175, 138, 0.08);
+  --glow:         rgba(123, 175, 138, 0.06);
+  --success:      #5a9e6f;
+  --danger:       #c4665a;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --color-forest: var(--forest);
-  --color-forest-light: var(--forest-light);
-  --color-leaf: var(--leaf);
-  --color-sage: var(--sage);
-  --color-amber: var(--amber);
-  --color-earth: var(--earth);
-  --color-soil: var(--soil);
-  --color-cream: var(--cream);
-  --color-deep-forest: var(--deep-forest);
-  --color-card: var(--card);
+  --color-bg:          var(--bg);
+  --color-fg:          var(--fg);
+  --color-pine:        var(--pine);
+  --color-pine-light:  var(--pine-light);
+  --color-sage:        var(--sage);
+  --color-sage-light:  var(--sage-light);
+  --color-clay:        var(--clay);
+  --color-clay-light:  var(--clay-light);
+  --color-honey:       var(--honey);
+  --color-honey-light: var(--honey-light);
+  --color-sand:        var(--sand);
+  --color-espresso:    var(--espresso);
+  --color-warm-grey:   var(--warm-grey);
+  --color-card:        var(--card);
   --color-card-border: var(--card-border);
-  --color-muted: var(--muted);
-  --color-danger: var(--danger);
-  --color-success: var(--success);
-  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --color-glow:        var(--glow);
+  --color-success:     var(--success);
+  --color-danger:      var(--danger);
+
+  --color-forest:       var(--pine);
+  --color-leaf:         var(--pine-light);
+  --color-amber:        var(--clay);
+  --color-muted:        var(--warm-grey);
+  --color-background:   var(--bg);
+  --color-foreground:   var(--fg);
+
+  --font-sans:  "Inter", ui-sans-serif, system-ui, sans-serif;
   --font-serif: "Fraunces", ui-serif, Georgia, serif;
 }
 
+/* ── Base ────────────────────────────────── */
+
+*, *::before, *::after { box-sizing: border-box; }
+* { scrollbar-width: thin; scrollbar-color: var(--sage-light) transparent; }
+html { -webkit-tap-highlight-color: transparent; scroll-behavior: smooth; }
+
 body {
-  background: var(--background);
-  color: var(--foreground);
+  background: var(--bg);
+  color: var(--fg);
   font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
+
+::selection { background: var(--pine); color: white; }
+
+/* ── Card styles ─────────────────────────── */
+
+@utility card {
+  background: var(--card);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--card-border);
+  border-radius: 1rem;
+  transition: all 0.25s ease;
+  @media (min-width: 768px) { border-radius: 1.25rem; }
+}
+
+@utility card-hover {
+  &:hover { border-color: var(--pine-light); box-shadow: 0 0 0 3px var(--glow); transform: translateY(-1px); }
+}
+
+/* ── Page layout ─────────────────────────── */
+
+@utility page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+  padding: 1.5rem 1.25rem 7rem;
+  @media (min-width: 768px) { padding: 2rem 2rem 7rem; }
+  @media (min-width: 1024px) { padding: 2.5rem 3rem 3rem; max-width: calc(100vw - 260px); margin-left: auto; width: 100%; }
+}
+
+@utility page-inner {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+  max-width: 28rem;
+  @media (min-width: 768px) { max-width: 42rem; gap: 2rem; }
+  @media (min-width: 1024px) { max-width: 72rem; }
+}
+
+/* ── Glassmorphism header/nav ────────────── */
+
+@utility glass-header {
+  background: var(--card);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--card-border);
+}
+
+/* ── Animations ──────────────────────────── */
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideInLeft {
+  from { opacity: 0; transform: translateX(-12px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-8px); }
+}
+
+@keyframes breathe {
+  0%, 100% { opacity: 0.4; transform: scale(1); }
+  50%      { opacity: 0.7; transform: scale(1.06); }
+}
+
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.96); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+@utility animate-fadeIn   { animation: fadeIn 0.5s ease-out both; }
+@utility animate-fadeUp   { animation: fadeUp 0.6s ease-out both; }
+@utility animate-slideInLeft { animation: slideInLeft 0.4s ease-out both; }
+@utility animate-float    { animation: float 5s ease-in-out infinite; }
+@utility animate-breathe  { animation: breathe 6s ease-in-out infinite; }
+@utility animate-scaleIn  { animation: scaleIn 0.4s ease-out both; }

@@ -5,35 +5,36 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { cn } from "@/lib/utils"
 
-const NAV_ITEMS = [
+const NAV = [
   { href: "/", label: "Home", icon: Home },
   { href: "/scan", label: "Scan", icon: Scan },
-  { href: "/leaderboard", label: "Rankings", icon: Trophy },
+  { href: "/leaderboard", label: "Rank", icon: Trophy },
   { href: "/rewards", label: "Rewards", icon: Gift },
   { href: "/profile", label: "Profile", icon: User },
 ]
 
 export default function BottomNav() {
-  const pathname = usePathname()
+  const p = usePathname()
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-50 border-t border-card-border bg-card/80 backdrop-blur-lg">
-      <div className="mx-auto flex max-w-lg items-center justify-around px-2 py-1">
-        {NAV_ITEMS.map(({ href, label, icon: Icon }) => {
-          const active = pathname === href
+    <nav className="fixed bottom-0 left-0 right-0 z-40 border-t border-card-border bg-card/70 backdrop-blur-xl lg:hidden">
+      <div className="mx-auto flex max-w-lg items-center justify-around px-2">
+        {NAV.map(({ href, label, icon: Icon }) => {
+          const active = p === href
           return (
             <Link
               key={href}
               href={href}
               className={cn(
-                "flex flex-col items-center gap-0.5 rounded-xl px-3 py-1.5 text-xs font-medium transition-colors",
-                active
-                  ? "text-forest"
-                  : "text-muted hover:text-foreground"
+                "relative flex flex-col items-center gap-0.5 rounded-xl px-3.5 py-1.5 text-[0.65rem] font-medium transition-all duration-200 md:text-[0.7rem] md:px-4",
+                active ? "text-pine" : "text-warm-grey hover:text-fg"
               )}
             >
-              <Icon size={22} strokeWidth={active ? 2.5 : 1.5} />
-              <span>{label}</span>
+              {active && (
+                <span className="absolute -top-px left-1/2 h-0.5 w-5 -translate-x-1/2 rounded-full bg-gradient-to-r from-pine to-pine-light md:w-6" />
+              )}
+              <Icon size={20} strokeWidth={active ? 2.5 : 1.5} className={active ? "drop-shadow-sm" : ""} />
+              <span className={active ? "font-semibold" : ""}>{label}</span>
             </Link>
           )
         })}

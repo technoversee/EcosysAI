@@ -1,4 +1,4 @@
-import { Shield, Check, X } from "lucide-react"
+import { Shield, Check, X, Sparkles } from "lucide-react"
 
 const dummyProofs = Array.from({ length: 3 }).map((_, i) => ({
   id: i + 1,
@@ -9,43 +9,46 @@ const dummyProofs = Array.from({ length: 3 }).map((_, i) => ({
 
 export default function AdminPage() {
   return (
-    <main className="flex flex-1 flex-col items-center px-4 pb-24 pt-6">
-      <div className="flex w-full max-w-lg flex-col items-center">
-        <div className="flex items-center gap-2">
-          <Shield size={22} className="text-forest dark:text-leaf" />
-          <h1 className="font-serif text-2xl font-semibold text-forest dark:text-leaf">Judge Panel</h1>
+    <main className="page">
+      <div className="page-inner">
+        {/* Header */}
+        <div className="w-full">
+          <div className="mb-1 inline-flex items-center gap-2 rounded-full bg-clay/8 px-3.5 py-1.5 text-xs font-medium text-clay">
+            <Shield size={12} />
+            Admin
+          </div>
+          <h1 className="font-serif text-xl font-semibold tracking-tight text-pine md:text-2xl lg:text-3xl">Judge Panel</h1>
+          <p className="mt-1 text-sm text-warm-grey md:text-base">Verify consistency photos & award bonus points</p>
         </div>
-        <p className="mt-1 text-sm text-muted">Verify consistency photos & award bonus points</p>
 
         {dummyProofs.length === 0 ? (
-          <p className="mt-12 text-center text-sm text-muted">No pending verifications.</p>
+          <div className="w-full card flex flex-col items-center gap-3 p-8 text-center md:p-10">
+            <Sparkles size={24} className="text-warm-grey" />
+            <p className="text-sm text-warm-grey">No pending verifications.</p>
+          </div>
         ) : (
-          <div className="mt-6 w-full space-y-3">
+          /* Responsive grid for proof cards */
+          <div className="grid w-full gap-3 md:grid-cols-2 md:gap-4 lg:grid-cols-3">
             {dummyProofs.map((proof) => (
-              <div
-                key={proof.id}
-                className="rounded-2xl bg-card p-4 shadow-sm ring-1 ring-card-border"
-              >
-                <div className="flex items-center justify-between">
+              <div key={proof.id} className="card overflow-hidden hover:ring-pine/15">
+                <div className="flex items-center justify-between px-4 pt-4 pb-2 md:px-5 md:pt-5">
                   <div>
-                    <p className="text-sm font-medium">{proof.user}</p>
-                    <p className="text-xs text-muted">{proof.material} waste — today</p>
+                    <p className="text-sm font-medium md:text-base">{proof.user}</p>
+                    <p className="text-xs text-warm-grey">{proof.material} — today</p>
                   </div>
-                  <span className="rounded-full bg-amber-100 px-3 py-1 text-xs font-medium text-amber-800 dark:bg-amber-900/30 dark:text-amber-300">
-                    {proof.status}
-                  </span>
+                  <span className="rounded-full bg-clay/8 px-3 py-1 text-xs font-medium text-clay">{proof.status}</span>
                 </div>
 
-                <div className="mt-3 flex aspect-video w-full items-center justify-center rounded-xl bg-sage/10 text-sm text-muted">
-                  [Proof Photo Placeholder]
+                <div className="mx-4 flex aspect-video items-center justify-center rounded-xl bg-sage/8 text-sm text-warm-grey md:mx-5">
+                  [Proof Photo]
                 </div>
 
-                <div className="mt-3 flex gap-2">
-                  <button className="flex flex-1 items-center justify-center gap-1.5 rounded-full bg-success py-2 text-sm font-medium text-white transition-colors hover:bg-green-600">
-                    <Check size={16} /> Approve
+                <div className="flex gap-2 p-4 md:p-5">
+                  <button className="flex flex-1 items-center justify-center gap-1.5 rounded-xl bg-success/85 py-2.5 text-sm font-medium text-white shadow-sm transition-all duration-200 hover:bg-success active:scale-[0.98] md:py-3">
+                    <Check size={15} /> Approve
                   </button>
-                  <button className="flex flex-1 items-center justify-center gap-1.5 rounded-full border border-card-border py-2 text-sm font-medium text-muted transition-colors hover:bg-danger/10 hover:text-danger">
-                    <X size={16} /> Reject
+                  <button className="flex flex-1 items-center justify-center gap-1.5 rounded-xl border border-card-border bg-card/40 py-2.5 text-sm font-medium text-warm-grey backdrop-blur-sm transition-all duration-200 hover:border-danger/25 hover:bg-danger/5 hover:text-danger md:py-3">
+                    <X size={15} /> Reject
                   </button>
                 </div>
               </div>
@@ -53,8 +56,8 @@ export default function AdminPage() {
           </div>
         )}
 
-        <p className="mt-6 text-center text-xs text-muted">
-          Bonus: +5 points per approved proof (once per user per day)
+        <p className="text-center text-xs text-warm-grey md:text-sm">
+          +5 points per approved proof (once per user per day)
         </p>
       </div>
     </main>
