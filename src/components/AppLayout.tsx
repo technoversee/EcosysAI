@@ -15,29 +15,6 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
   const { data: session, status } = useSession()
   const router = useRouter()
   const [notifOpen, setNotifOpen] = useState(false)
-  const [natureBg, setNatureBg] = useState(false)
-
-  useEffect(() => {
-    try {
-      const saved = localStorage.getItem("ecosort-settings")
-      if (saved) {
-        const parsed = JSON.parse(saved)
-        setNatureBg(!!parsed.natureBg)
-      }
-    } catch {}
-  }, [])
-
-  // Listen for changes from settings page
-  useEffect(() => {
-    function handleStorage() {
-      try {
-        const saved = localStorage.getItem("ecosort-settings")
-        if (saved) setNatureBg(!!JSON.parse(saved).natureBg)
-      } catch {}
-    }
-    window.addEventListener("storage", handleStorage)
-    return () => window.removeEventListener("storage", handleStorage)
-  }, [])
 
   useEffect(() => {
     if (status === "unauthenticated") {
@@ -57,7 +34,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
 
   return (
     <div className="app-shell" id="app">
-      {natureBg && <NatureBackground />}
+      <NatureBackground />
       <AppSidebar />
       <div className="main-area">
         <AppTopbar onNotifClick={() => setNotifOpen((v) => !v)} />

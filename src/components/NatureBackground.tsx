@@ -1,37 +1,71 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useState, useRef } from "react"
 import { NATURE_BACKGROUNDS } from "@/lib/constants"
 
 export default function NatureBackground() {
+  const [visible, setVisible] = useState(false)
   const [index, setIndex] = useState(0)
   const [loaded, setLoaded] = useState(false)
-  const [nextReady, setNextReady] = useState(false)
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
+  // Check localStorage every 500ms for the natureBg setting
+  // This catches changes made in the settings page within the same tab
   useEffect(() => {
+    function check() {
+      try {
+        const saved = localStorage.getItem("ecosort-settings")
+        if (saved) {
+          const parsed = JSON.parse(saved)
+          setVisible(!!parsed.natureBg)
+        } else {
+          setVisible(false)
+        }
+      } catch {
+        setVisible(false)
+      }
+    }
+    check()
+    const id = setInterval(check, 500)
+    return () => clearInterval(id)
+  }, [])
+
+  // Start/stop the image rotation
+  useEffect(() => {
+    if (!visible) {
+      if (intervalRef.current) clearInterval(intervalRef.current)
+      return
+    }
+
     const idx = Math.floor(Math.random() * NATURE_BACKGROUNDS.length)
     setIndex(idx)
+    setLoaded(false)
 
-    const preload = new Image()
-    preload.src = NATURE_BACKGROUNDS[(idx + 1) % NATURE_BACKGROUNDS.length]
-    preload.onload = () => setNextReady(true)
+    // Preload next image
+    const preloadNext = (currentIdx: number) => {
+      const img = new Image()
+      img.src = NATURE_BACKGROUNDS[(currentIdx + 1) % NATURE_BACKGROUNDS.length]
+    }
+    preloadNext(idx)
 
-    const interval = setInterval(() => {
+    intervalRef.current = setInterval(() => {
       setIndex((prev) => {
         const next = (prev + 1) % NATURE_BACKGROUNDS.length
-        const pre = new Image()
-        pre.src = NATURE_BACKGROUNDS[(next + 1) % NATURE_BACKGROUNDS.length]
+        setLoaded(false)
+        preloadNext(next)
         return next
       })
     }, 40000)
 
-    return () => clearInterval(interval)
-  }, [])
+    return () => {
+      if (intervalRef.current) clearInterval(intervalRef.current)
+    }
+  }, [visible])
+
+  if (!visible) return null
 
   return (
     <>
-      {/* Preload current image */}
-      <link rel="preload" href={NATURE_BACKGROUNDS[index]} as="image" />
       <div
         style={{
           position: "fixed",
@@ -46,7 +80,6 @@ export default function NatureBackground() {
           willChange: "opacity",
         }}
       />
-      {/* Dark overlay so text remains readable */}
       <div
         style={{
           position: "fixed",
