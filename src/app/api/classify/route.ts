@@ -3,6 +3,8 @@ import { classifyWasteImage } from "@/lib/groq"
 import { getDb } from "@/lib/db"
 import { auth } from "@/lib/auth"
 
+const POINTS = { Plastic: 10, Metal: 5, Glass: 5, Paper: 3, "Food Waste": 2 } as Record<string, number>
+
 export async function POST(req: NextRequest) {
   try {
     const session = await auth()
@@ -25,16 +27,12 @@ export async function POST(req: NextRequest) {
 
     const db = getDb()
     const scanId = crypto.randomUUID()
-    const points = { Plastic: 10, Metal: 5, Glass: 5, Paper: 3, "Food Waste": 2 } as Record<string, number>
-    const pts = points[result.material] || 0
+    const pts = POINTS[result.material] || 0
 
+    // Save scan WITHOUT awarding points yet — user must confirm disposal first
     db.prepare(
-      "INSERT INTO scans (id, user_id, material, confidence, points_awarded, image_data) VALUES (?, ?, ?, ?, ?, ?)"
+      "INSERT INTO scans (id, user_id, material, confidence, points_awarded, image_data, confirmed) VALUES (?, ?, ?, ?, ?, ?, 0)"
     ).run(scanId, session.user.id, result.material, result.confidence, pts, base64.slice(0, 2000))
-
-    db.prepare("UPDATE users SET points = points + ? WHERE id = ?").run(pts, session.user.id)
-
-    const user = db.prepare("SELECT points FROM users WHERE id = ?").get(session.user.id) as any
 
     return NextResponse.json({
       scanId,
@@ -45,7 +43,6 @@ export async function POST(req: NextRequest) {
       bin: result.bin,
       tips: result.tips,
       pointsAwarded: pts,
-      totalPoints: user?.points || 0,
       image: dataUri,
     })
   } catch (err) {
