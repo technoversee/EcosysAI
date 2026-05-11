@@ -61,7 +61,7 @@ function useSettings() {
     const parsed = saved ? { ...initial, ...JSON.parse(saved) } : initial
     setSettings(parsed)
     if (parsed.darkMode) {
-      document.documentElement.setAttribute("data-theme", "dark")
+      document.documentElement.classList.add("dark")
     }
   }, [])
 
@@ -69,7 +69,7 @@ function useSettings() {
     setSettings((prev) => {
       const next = { ...prev, [id]: !prev[id] }
       if (id === "darkMode") {
-        document.documentElement.setAttribute("data-theme", next.darkMode ? "dark" : "light")
+        document.documentElement.classList.toggle("dark", next.darkMode)
         localStorage.setItem("ecosort-theme", next.darkMode ? "dark" : "light")
       }
       localStorage.setItem("ecosort-settings", JSON.stringify(next))

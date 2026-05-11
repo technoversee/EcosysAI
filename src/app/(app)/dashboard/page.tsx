@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback } from "react"
 import { useSession } from "next-auth/react"
 import { REWARDS } from "@/lib/constants"
+import TreeAnimation from "@/components/TreeAnimation"
 
 interface LeaderUser {
   id: string
@@ -140,6 +141,18 @@ export default function DashboardPage() {
         <div className="hero-streak">
           &#127793; {totalItemsRecycled} items recycled
         </div>
+      </div>
+
+      {/* ── Tree Card ── */}
+      <div className="card" style={{ marginBottom: 24, padding: "24px 0", textAlign: "center" }}>
+        <TreeAnimation points={ecoPoints} />
+        <p style={{ marginTop: 4, fontSize: 13, color: "var(--grey-500)" }}>
+          {ecoPoints >= 700 ? "🌲 Fully Grown!" 
+            : ecoPoints >= 350 ? `🌳 ${700 - ecoPoints} pts to Fully Grown`
+            : ecoPoints >= 150 ? `🌿 ${350 - ecoPoints} pts to Growing`
+            : ecoPoints >= 50 ? `🌱 ${150 - ecoPoints} pts to Sapling`
+            : `${50 - ecoPoints} pts to Sprout`}
+        </p>
       </div>
 
       {/* ── Stats Grid ── */}

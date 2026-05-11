@@ -2,43 +2,14 @@
 
 import { useEffect, useState } from "react"
 import { useSession, signOut } from "next-auth/react"
+import TreeAnimation from "@/components/TreeAnimation"
 
 interface LeaderUser {
   id: string
   name: string
   email: string
-  image: string
   points: number
   scans: number
-}
-
-function useCounterAnimation(deps: unknown[]) {
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        for (const entry of entries) {
-          if (entry.isIntersecting) {
-            const el = entry.target as HTMLElement
-            const target = parseInt(el.dataset.target || "0", 10)
-            const duration = 1200
-            const start = performance.now()
-            function update(now: number) {
-              const elapsed = now - start
-              const progress = Math.min(elapsed / duration, 1)
-              const eased = 1 - Math.pow(1 - progress, 3)
-              el.textContent = Math.floor(eased * target).toLocaleString()
-              if (progress < 1) requestAnimationFrame(update)
-            }
-            requestAnimationFrame(update)
-            observer.unobserve(el)
-          }
-        }
-      },
-      { threshold: 0.5 }
-    )
-    document.querySelectorAll(".counter").forEach((el) => observer.observe(el))
-    return () => observer.disconnect()
-  }, deps)
 }
 
 const achievements = [
@@ -48,13 +19,6 @@ const achievements = [
   { name: "Waste Master", unlocked: false },
   { name: "Recycling Legend", unlocked: false },
   { name: "Carbon Crusher", unlocked: false },
-]
-
-const recentActivity = [
-  { title: "Scanned Plastic Bottle", time: "2 min ago", points: "+15", dot: "green" as const },
-  { title: "Eco Hero Badge Unlocked", time: "1 hour ago", points: "+100 XP", dot: "mint" as const },
-  { title: "Redeemed Free Coffee Coupon", time: "3 hours ago", points: "-200", dot: "orange" as const },
-  { title: "Scanned Aluminum Can", time: "5 hours ago", points: "+10", dot: "green" as const },
 ]
 
 const savedRewards = [
@@ -69,24 +33,30 @@ function getInitials(name: string) {
 
 export default function ProfilePage() {
   const { data: session } = useSession()
-  const [leaderboard, setLeaderboard] = useState<LeaderUser[]>([])
+  const [users, setUsers] = useState<LeaderUser[]>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     fetch("/api/leaderboard")
       .then((r) => r.json())
-      .then((data) => setLeaderboard(data.users ?? []))
+      .then((data) => { setUsers(data.users || []) })
       .catch(() => {})
       .finally(() => setLoading(false))
   }, [])
 
-  useCounterAnimation([loading, leaderboard])
+  const myUser = users.find((u) => u.id === session?.user?.id)
+  const myRank = myUser ? users.findIndex((u) => u.id === myUser.id) + 1 : users.length + 1
+  const points = myUser?.points || 0
+  const scans = myUser?.scans || 0
+  const xp = Math.floor(points * 2.5)
 
-  const currentUser = leaderboard.find((u) => u.id === session?.user?.id)
-  const ecoPoints = currentUser?.points ?? 0
-  const xp = Math.floor(ecoPoints * 2.5)
-  const foundIndex = currentUser ? leaderboard.findIndex((u) => u.id === currentUser.id) : -1
-  const rank = foundIndex >= 0 ? foundIndex + 1 : null
+  // Derived activity from real scan data
+  const activityItems = scans > 0
+    ? [
+        { title: `${scans} item${scans > 1 ? "s" : ""} recycled`, time: "All time", points: `+${points}`, dot: "green" as const },
+        { title: `Rank #${myRank} on leaderboard`, time: "Current", points: `${xp} XP`, dot: "mint" as const },
+      ]
+    : [{ title: "No scans yet", time: "Start scanning!", points: "", dot: "mint" as const }]
 
   const name = session?.user?.name || "User"
   const email = session?.user?.email || "user@ecosys.ai"
@@ -99,17 +69,22 @@ export default function ProfilePage() {
         <div className="profile-email">{email}</div>
       </div>
 
-      <div className="profile-stats">
+      {/* Tree + Stats */}
+      <div className="card" style={{ padding: "16px 0", marginBottom: 16, textAlign: "center" }}>
+        <TreeAnimation points={points} />
+      </div>
+
+      <div className="profile-stats" style={{ marginBottom: 16 }}>
         <div className="profile-stat">
-          <div className="ps-value"><span className="counter" data-target={ecoPoints}>0</span></div>
+          <div className="ps-value">{loading ? "..." : points}</div>
           <div className="ps-label">EcoPoints</div>
         </div>
         <div className="profile-stat">
-          <div className="ps-value"><span className="counter" data-target={xp}>0</span></div>
+          <div className="ps-value">{loading ? "..." : xp}</div>
           <div className="ps-label">XP</div>
         </div>
         <div className="profile-stat">
-          <div className="ps-value">{rank != null ? `#${rank}` : "N/A"}</div>
+          <div className="ps-value">{loading ? "..." : `#${myRank}`}</div>
           <div className="ps-label">Rank</div>
         </div>
       </div>
@@ -130,7 +105,7 @@ export default function ProfilePage() {
 
       <div className="profile-section">
         <h3>Recent Activity</h3>
-        {recentActivity.map((a) => (
+        {activityItems.map((a) => (
           <div key={a.title + a.time} className="activity-item">
             <div className={`activity-dot ${a.dot}`} />
             <div className="activity-content">
@@ -156,11 +131,7 @@ export default function ProfilePage() {
       </div>
 
       <button
-        onClick={() => {
-          localStorage.removeItem("ecosort-token")
-          localStorage.removeItem("ecosort-user")
-          signOut({ callbackUrl: "/" })
-        }}
+        onClick={() => signOut({ callbackUrl: "/" })}
         style={{
           width: "100%", marginTop: 20, padding: 14,
           border: "1.5px solid var(--grey-200)", borderRadius: 10,
