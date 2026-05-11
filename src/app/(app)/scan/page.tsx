@@ -1,7 +1,9 @@
 "use client"
 
-import { useState, useRef, useCallback } from "react"
+import { useState, useRef, useEffect, useCallback } from "react"
 import { useRouter } from "next/navigation"
+import { useSession } from "next-auth/react"
+import { ACHIEVEMENTS } from "@/lib/constants"
 
 interface ScanResult {
   scanId: string
@@ -75,6 +77,7 @@ const MATERIAL_INFO: Record<string, { color: string; instructions: string[]; imp
 
 export default function ScanPage() {
   const router = useRouter()
+  const { data: session } = useSession()
   const fileRef = useRef<HTMLInputElement>(null)
   const [scanning, setScanning] = useState(false)
   const [preview, setPreview] = useState<string | null>(null)
@@ -135,9 +138,76 @@ export default function ScanPage() {
     }
   }, [result])
 
+  const counterRef = useRef<HTMLDivElement>(null)
   const color = matInfo?.color || "#889296"
   const co2Saved = result?.material ? 0.4 : 0
   const xpEarned = earned ? (earned.pointsAwarded * 2.5).toFixed(0) : "0"
+
+  // Find unlocked badge
+  const [myScans, setMyScans] = useState(0)
+  const [myMaterials, setMyMaterials] = useState<Record<string, number>>({})
+  useEffect(() => {
+    if (!result?.material) return
+    fetch("/api/leaderboard")
+      .then((r) => r.json())
+      .then((data) => {
+        const users = data.users ?? []
+        const myUser = users.find((u: any) => u.id === session?.user?.id)
+        setMyScans(myUser?.scans ?? 0)
+        const breakdown = (data.breakdown ?? []) as { user_id: string; material: string; count: number }[]
+        const myB = breakdown.filter((b: any) => b.user_id === session?.user?.id)
+        const m: Record<string, number> = {}
+        for (const b of myB) m[b.material] = (m[b.material] || 0) + b.count
+        setMyMaterials(m)
+      })
+      .catch(() => {})
+  }, [earned, session])
+
+  const totalPoints = earned?.totalPoints ?? 0
+  const unlockedBadge = ACHIEVEMENTS.find((a) => {
+    const pts = totalPoints
+    return a.check(myScans, pts, myMaterials) && a.id !== "first_scan"
+  })
+
+  // Launch confetti on celebrate
+  useEffect(() => {
+    if (step !== "celebrate") return
+    const container = document.getElementById("confettiContainer")
+    if (!container) return
+    const colors = ["#2d6a4f","#40916c","#52b788","#74c69d","#95d5b2","#b7e4c7","#f39c12","#e74c3c"]
+    const pieces: HTMLElement[] = []
+    for (let i = 0; i < 80; i++) {
+      const piece = document.createElement("div")
+      piece.className = "confetti-piece"
+      piece.style.left = Math.random() * 100 + "%"
+      piece.style.background = colors[Math.floor(Math.random() * colors.length)]
+      piece.style.width = (4 + Math.random() * 6) + "px"
+      piece.style.height = (4 + Math.random() * 6) + "px"
+      piece.style.borderRadius = Math.random() > 0.5 ? "50%" : "2px"
+      piece.style.animationDuration = (2 + Math.random() * 3) + "s"
+      piece.style.animationDelay = Math.random() * 2 + "s"
+      container.appendChild(piece)
+      pieces.push(piece)
+      setTimeout(() => piece.remove(), 5000)
+    }
+    return () => pieces.forEach((p) => p.remove())
+  }, [step])
+
+  // Counter animation on celebrate
+  useEffect(() => {
+    if (step !== "celebrate" || !counterRef.current || !earned) return
+    const el = counterRef.current
+    const target = earned.pointsAwarded
+    const duration = 800
+    const start = performance.now()
+    function update(now: number) {
+      const progress = Math.min((now - start) / duration, 1)
+      const eased = 1 - Math.pow(1 - progress, 3)
+      el.textContent = "+" + Math.floor(eased * target)
+      if (progress < 1) requestAnimationFrame(update)
+    }
+    requestAnimationFrame(update)
+  }, [step, earned])
 
   return (
     <div className="scanner-container">
@@ -296,10 +366,17 @@ export default function ScanPage() {
       {earned && step === "celebrate" && result && (
         <div className="reward-earned" style={{ textAlign: "center", padding: "32px 0" }}>
           <div style={{ fontSize: 64, marginBottom: 8 }}>🎉</div>
-          <div style={{ fontSize: 48, fontWeight: 900, color: "var(--emerald)", marginBottom: 4 }}>
-            +{earned.pointsAwarded}
+          <div ref={counterRef} style={{ fontSize: 48, fontWeight: 900, color: "var(--emerald)", marginBottom: 4 }}>
+            +0
           </div>
           <div style={{ fontSize: 16, color: "var(--grey-500)", marginBottom: 24 }}>EcoPoints Earned</div>
+
+          {unlockedBadge && (
+            <div className="reward-badge" style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8, padding: "10px 20px", borderRadius: 100, background: "rgba(45,106,79,0.1)", color: "var(--emerald)", fontSize: 14, fontWeight: 600, marginBottom: 24, width: "fit-content", margin: "0 auto 24px" }}>
+              <span style={{ fontSize: 20 }}>{unlockedBadge.icon}</span>
+              {unlockedBadge.name} Badge Unlocked!
+            </div>
+          )}
 
           <div className="card" style={{ marginBottom: 24 }}>
             <div className="reward-detail" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
@@ -314,8 +391,8 @@ export default function ScanPage() {
             </div>
           </div>
 
-          <div style={{ fontSize: 13, color: "var(--grey-400)", marginBottom: 24 }}>
-            Total Balance: <strong style={{ color: "var(--emerald)" }}>{earned.totalPoints}</strong> EcoPoints
+          <div style={{ fontSize: 14, color: "var(--grey-500)", marginBottom: 24 }}>
+            Total Balance: <strong style={{ color: "var(--emerald)", fontSize: 18 }}>{earned.totalPoints}</strong> EcoPoints
           </div>
 
           <div className="scan-actions" style={{ gap: 12 }}>
