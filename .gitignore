@@ -42,6 +42,11 @@ data/*.db-shm
 .env.test.local
 .env.production.local
 
+# database
+data/*.db
+data/*.db-wal
+data/*.db-shm
+
 # vercel
 .vercel
 
