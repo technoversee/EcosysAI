@@ -35,6 +35,7 @@ export const authConfig: NextAuthConfig = {
         return { id: user.id, name: user.name, email: user.email, image: user.image }
       },
     }),
+    Google,
   ],
   callbacks: {
     async session({ session, token }) {
