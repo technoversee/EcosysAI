@@ -19,6 +19,7 @@ export async function POST(req: NextRequest) {
     const bytes = await file.arrayBuffer()
     const buffer = Buffer.from(bytes)
     const base64 = buffer.toString("base64")
+    const dataUri = `data:${file.type};base64,${base64}`
 
     const result = await classifyWasteImage(base64)
 
@@ -29,7 +30,7 @@ export async function POST(req: NextRequest) {
 
     db.prepare(
       "INSERT INTO scans (id, user_id, material, confidence, points_awarded, image_data) VALUES (?, ?, ?, ?, ?, ?)"
-    ).run(scanId, session.user.id, result.material, result.confidence, pts, base64.slice(0, 1000))
+    ).run(scanId, session.user.id, result.material, result.confidence, pts, base64.slice(0, 2000))
 
     db.prepare("UPDATE users SET points = points + ? WHERE id = ?").run(pts, session.user.id)
 
@@ -40,8 +41,12 @@ export async function POST(req: NextRequest) {
       material: result.material,
       confidence: result.confidence,
       explanation: result.explanation,
+      category: result.category,
+      bin: result.bin,
+      tips: result.tips,
       pointsAwarded: pts,
       totalPoints: user?.points || 0,
+      image: dataUri,
     })
   } catch (err) {
     console.error("Classify error:", err)
