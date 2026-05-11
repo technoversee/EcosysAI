@@ -1,10 +1,6 @@
 import type { Metadata } from "next"
 import { Fraunces, Inter } from "next/font/google"
 import "./globals.css"
-import BottomNav from "@/components/BottomNav"
-import NotificationBanner from "@/components/NotificationBanner"
-import ThemeToggle from "@/components/ThemeToggle"
-import AuthButton from "@/components/AuthButton"
 import Providers from "@/components/Providers"
 
 const fraunces = Fraunces({
@@ -29,18 +25,9 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en" className={`${fraunces.variable} ${inter.variable} antialiased`} suppressHydrationWarning>
-      <body className="min-h-dvh flex flex-col bg-background font-sans text-foreground">
+      <body className="min-h-dvh bg-background font-sans text-foreground">
         <Providers>
-        <header className="sticky top-0 z-50 flex items-center justify-between border-b border-card-border bg-card/80 px-4 py-2.5 backdrop-blur-lg">
-          <h1 className="font-serif text-lg font-semibold text-forest dark:text-leaf">EcosysAI</h1>
-          <div className="flex items-center gap-2">
-            <AuthButton />
-            <ThemeToggle />
-          </div>
-        </header>
-        <NotificationBanner />
-        <div className="flex flex-1 flex-col">{children}</div>
-        <BottomNav />
+          {children}
         </Providers>
       </body>
     </html>
