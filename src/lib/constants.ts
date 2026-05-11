@@ -40,18 +40,21 @@ export const WASTE_FACTS = [
 ]
 
 export const REWARDS = [
-  { id: 1, name: "Recycled Notebook", cost: 30, emoji: "📓", description: "A5 notebook made from 100% post-consumer recycled paper" },
-  { id: 2, name: "Bamboo Toothbrush Set", cost: 50, emoji: "🪥", description: "Set of 4 biodegradable bamboo toothbrushes" },
-  { id: 3, name: "Reusable Produce Bags", cost: 75, emoji: "🛍️", description: "Set of 5 mesh produce bags, washable and plastic-free" },
-  { id: 4, name: "Seed Bomb Pack", cost: 100, emoji: "🌸", description: "10 wildflower seed bombs for guerilla gardening" },
-  { id: 5, name: "Stainless Steel Straw Set", cost: 120, emoji: "🥤", description: "4 stainless steel straws with cleaning brush" },
-  { id: 6, name: "Beeswax Food Wraps", cost: 150, emoji: "🍯", description: "3-pack reusable beeswax wraps, assorted sizes" },
-  { id: 7, name: "Solar Power Bank", cost: 200, emoji: "🔋", description: "10,000mAh solar-powered portable charger" },
-  { id: 8, name: "Compost Starter Kit", cost: 250, emoji: "🌱", description: "Countertop compost bin + starter bacteria pack" },
-  { id: 9, name: "Reusable Water Bottle", cost: 300, emoji: "🧴", description: "Double-wall insulated stainless steel, 750ml" },
-  { id: 10, name: "Eco Tote Bag", cost: 100, emoji: "👜", description: "Organic cotton tote, hand-printed with eco designs" },
-  { id: 11, name: "Bamboo Cutlery Set", cost: 80, emoji: "🥢", description: "Portable bamboo fork, knife, spoon, chopsticks + case" },
-  { id: 12, name: "Tree Planted in Your Name", cost: 500, emoji: "🌳", description: "We plant a native tree in your honor + GPS coordinates" },
+  // ── Entry level (50–300 pts = 5–30 bottles) ──
+  { id: 1, name: "₹20 Amazon Pay Voucher", cost: 150, emoji: "🛒", description: "Amazon Pay balance added to your account instantly" },
+  { id: 2, name: "₹50 Flipkart Gift Card", cost: 350, emoji: "📦", description: "Flipkart gift voucher — shop anything on the platform" },
+  { id: 3, name: "₹50 Zomato Food Credit", cost: 350, emoji: "🍕", description: "Zomato credit for your next food delivery order" },
+  { id: 4, name: "₹50 Amazon Pay Voucher", cost: 400, emoji: "🛒", description: "Amazon Pay balance — pay bills, shop, recharge" },
+  { id: 5, name: "₹100 Swiggy Money", cost: 700, emoji: "🍔", description: "Swiggy money for food delivery and dining out" },
+  // ── Mid tier (750–2000 pts) ──
+  { id: 6, name: "₹100 Amazon Pay Voucher", cost: 800, emoji: "🛒", description: "₹100 Amazon Pay — shop millions of products" },
+  { id: 7, name: "₹100 Flipkart Gift Card", cost: 800, emoji: "📦", description: "Flipkart voucher valid across all categories" },
+  { id: 8, name: "₹200 Amazon Pay Voucher", cost: 1500, emoji: "🛒", description: "₹200 Amazon Pay — bigger savings on your purchases" },
+  { id: 9, name: "₹250 Myntra Fashion Voucher", cost: 1800, emoji: "👕", description: "Myntra credit for fashion, accessories & more" },
+  // ── High tier (2500–5000 pts) ──
+  { id: 10, name: "₹500 Amazon Pay Voucher", cost: 3500, emoji: "🛒", description: "₹500 Amazon Pay — major reward for dedicated recyclers" },
+  { id: 11, name: "₹500 Flipkart Gift Card", cost: 3500, emoji: "📦", description: "₹500 Flipkart voucher — treat yourself" },
+  { id: 12, name: "₹1000 Amazon Pay Voucher", cost: 6500, emoji: "💎", description: "₹1,000 Amazon Pay — our premium reward for eco-champions" },
 ] as const
 
 export const ACHIEVEMENTS = [
