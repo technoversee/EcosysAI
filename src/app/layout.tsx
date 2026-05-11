@@ -18,7 +18,7 @@ const inter = Inter({
 })
 
 export const metadata: Metadata = {
-  title: "EcoSort — Scan. Sort. Earn.",
+  title: "EcosysAI — Scan. Sort. Earn.",
   description: "AI-powered waste segregation assistant for a cleaner planet.",
 }
 
@@ -29,7 +29,7 @@ export default function RootLayout({
     <html lang="en" className={`${fraunces.variable} ${inter.variable} antialiased`} suppressHydrationWarning>
       <body className="min-h-dvh flex flex-col bg-background font-sans text-foreground">
         <header className="sticky top-0 z-50 flex items-center justify-between border-b border-card-border bg-card/80 px-4 py-2.5 backdrop-blur-lg">
-          <h1 className="font-serif text-lg font-semibold text-forest dark:text-leaf">EcoSort</h1>
+          <h1 className="font-serif text-lg font-semibold text-forest dark:text-leaf">EcosysAI</h1>
           <ThemeToggle />
         </header>
         <NotificationBanner />

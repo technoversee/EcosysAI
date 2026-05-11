@@ -12,7 +12,7 @@ export default function HomePage() {
   return (
     <main className="flex flex-1 flex-col items-center px-4 pb-24 pt-6">
       <div className="flex w-full max-w-lg flex-col items-center">
-        <h1 className="font-serif text-2xl font-semibold text-forest dark:text-leaf">EcoSort</h1>
+        <h1 className="font-serif text-2xl font-semibold text-forest dark:text-leaf">EcosysAI</h1>
         <p className="mt-1 text-sm text-muted">Scan. Sort. Earn.</p>
 
         <div className="mt-6 flex w-full flex-col items-center rounded-3xl bg-card p-6 shadow-sm ring-1 ring-card-border">
