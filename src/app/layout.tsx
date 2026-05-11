@@ -25,6 +25,18 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en" className={`${fraunces.variable} ${inter.variable} antialiased`} suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{
+          __html: `
+            try {
+              var t = localStorage.getItem("ecosort-theme") || localStorage.getItem("theme");
+              if (t === "dark" || (!t && window.matchMedia("(prefers-color-scheme: dark)").matches)) {
+                document.documentElement.classList.add("dark");
+              }
+            } catch(e) {}
+          `
+        }} />
+      </head>
       <body className="min-h-dvh bg-background font-sans text-foreground">
         <Providers>
           {children}
