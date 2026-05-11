@@ -1,17 +1,20 @@
 "use client"
 
+import { useState } from "react"
 import { useSession } from "next-auth/react"
 import { useRouter } from "next/navigation"
 import { useEffect } from "react"
 import AppSidebar from "@/components/AppSidebar"
 import AppTopbar from "@/components/AppTopbar"
 import AppBottomNav from "@/components/AppBottomNav"
+import AppNotifications from "@/components/AppNotifications"
 import ScanFab from "@/components/ScanFab"
 import NotificationBanner from "@/components/NotificationBanner"
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   const { data: session, status } = useSession()
   const router = useRouter()
+  const [notifOpen, setNotifOpen] = useState(false)
 
   useEffect(() => {
     if (status === "unauthenticated") {
@@ -33,8 +36,9 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
     <div className="app-shell" id="app">
       <AppSidebar />
       <div className="main-area">
-        <AppTopbar />
+        <AppTopbar onNotifClick={() => setNotifOpen((v) => !v)} />
         <NotificationBanner />
+        <AppNotifications open={notifOpen} onClose={() => setNotifOpen(false)} />
         <div className="screens" id="screensContainer">
           {children}
         </div>
