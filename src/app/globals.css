@@ -323,6 +323,12 @@ ul { list-style: none; }
 
 .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
 
+/* ===== HOVER BORDER ===== */
+.card:hover, .stat-card:hover, .reward-card:hover, .admin-card:hover,
+.lb-item:hover, .qaction:hover, .scanner-cta:hover,
+.nav-item:not(.logout):hover, .mob-nav-item:hover, .dd-item:hover,
+.setting-item:hover, .feature-card:hover, .step-card:hover { box-shadow: 0 0 0 1.5px var(--emerald); }
+
 ::-webkit-scrollbar { width: 8px; }
 ::-webkit-scrollbar-track { background: var(--bg); }
 ::-webkit-scrollbar-thumb { background: var(--sage-light); border-radius: 4px; }
