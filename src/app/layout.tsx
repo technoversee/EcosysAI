@@ -5,6 +5,7 @@ import BottomNav from "@/components/BottomNav"
 import NotificationBanner from "@/components/NotificationBanner"
 import ThemeToggle from "@/components/ThemeToggle"
 import NatureBackground from "@/components/NatureBackground"
+import SplashScreen from "@/components/SplashScreen"
 
 const fraunces = Fraunces({
   subsets: ["latin"],
@@ -30,6 +31,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${fraunces.variable} ${inter.variable} antialiased`} suppressHydrationWarning>
       <body className="min-h-dvh flex flex-col">
+        <SplashScreen />
         <NatureBackground />
         <header className="sticky top-0 z-50 flex items-center justify-between border-b border-card-border bg-card/70 px-5 py-3 backdrop-blur-xl">
           <div className="flex items-center gap-2">
