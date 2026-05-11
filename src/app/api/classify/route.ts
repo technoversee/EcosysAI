@@ -50,6 +50,7 @@ export async function POST(req: NextRequest) {
     })
   } catch (err) {
     console.error("Classify error:", err)
-    return NextResponse.json({ error: "Classification failed" }, { status: 500 })
+    const msg = err instanceof Error ? err.message : String(err)
+    return NextResponse.json({ error: "Classification failed", detail: msg }, { status: 500 })
   }
 }

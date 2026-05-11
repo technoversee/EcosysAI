@@ -16,7 +16,7 @@ export interface ClassificationResult {
 
 export async function classifyWasteImage(imageBase64: string): Promise<ClassificationResult> {
   const response = await groq.chat.completions.create({
-    model: "llama-3.2-90b-vision-preview",
+    model: "meta-llama/llama-4-scout-17b-16e-instruct",
     messages: [
       {
         role: "system",
@@ -42,7 +42,7 @@ Provide 3-4 practical disposal tips specific to that material.`,
         ],
       },
     ],
-    max_tokens: 400,
+    max_tokens: 600,
     temperature: 0.1,
   })
 
