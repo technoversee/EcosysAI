@@ -63,6 +63,7 @@ function initSchema(db: Database.Database) {
       confidence REAL,
       points_awarded INTEGER DEFAULT 0,
       image_data TEXT,
+      confirmed INTEGER DEFAULT 0,
       created_at TEXT DEFAULT (datetime('now'))
     );
 
@@ -89,4 +90,7 @@ function initSchema(db: Database.Database) {
       fact TEXT NOT NULL
     );
   `)
+
+  // Migration: add confirmed column if missing
+  try { db.exec("ALTER TABLE scans ADD COLUMN confirmed INTEGER DEFAULT 0") } catch {}
 }
