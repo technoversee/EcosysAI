@@ -33,8 +33,8 @@ export default function RootLayout({
         <NatureBackground />
         <header className="sticky top-0 z-50 flex items-center justify-between border-b border-card-border bg-card/70 px-5 py-3 backdrop-blur-xl">
           <div className="flex items-center gap-2">
-            <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-forest text-sm">🌱</span>
-            <h1 className="font-serif text-lg font-semibold tracking-tight text-forest dark:text-leaf">
+            <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-pine text-sm">🌱</span>
+            <h1 className="font-serif text-lg font-semibold tracking-tight text-pine">
               EcosysAI
             </h1>
           </div>
