@@ -1,51 +1,28 @@
 "use client"
 
-import { useEffect, useState, useCallback } from "react"
+import { useEffect, useState } from "react"
 import { useSession } from "next-auth/react"
-import { REWARDS } from "@/lib/constants"
+import { REWARDS, ACHIEVEMENTS } from "@/lib/constants"
 import TreeAnimation from "@/components/TreeAnimation"
 
 interface LeaderUser {
-  id: string
-  name: string
-  email: string
-  image: string
-  points: number
-  scans: number
+  id: string; name: string; email: string; image: string; points: number; scans: number
 }
 
 interface ScanBreakdown {
-  user_id: string
-  material: string
-  count: number
+  user_id: string; material: string; count: number
 }
 
-interface ActivityItem {
-  title: string
-  time: string
-  points: string
-  dot: string
+interface TrendPoint {
+  count: number; day?: string; month?: string
 }
 
 interface Achievement {
-  name: string
-  icon: string
-  unlocked: boolean
+  id: string; name: string; desc: string; icon: string; unlocked: boolean
 }
 
-interface RewardPreview {
-  brand: string
-  name: string
-  points: number
-  desc: string
-}
-
-interface Center {
-  name: string
-  addr: string
-  dist: string
-  icon: string
-}
+const DAY_NAMES = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
+const MONTH_NAMES = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
 
 function greeting(): string {
   const h = new Date().getHours()
@@ -54,38 +31,25 @@ function greeting(): string {
   return "Good Evening"
 }
 
-const EMPTY_ACTIVITY: ActivityItem[] = [
-  { title: "No activity yet", time: "Start scanning to see your activity", points: "", dot: "mint" },
-]
-
-const ACHIEVEMENTS: Achievement[] = [
-  { name: "Plastic Warrior", icon: "\u267B", unlocked: true },
-  { name: "Green Citizen", icon: "\uD83C\uDF31", unlocked: true },
-  { name: "Eco Hero", icon: "\uD83C\uDFC6", unlocked: true },
-  { name: "Waste Master", icon: "\uD83D\uDEE1", unlocked: false },
-  { name: "Recycling Legend", icon: "\uD83C\uDF1F", unlocked: false },
-  { name: "Carbon Crusher", icon: "\uD83C\uDF0D", unlocked: false },
-]
-
-const REWARD_PREVIEWS: RewardPreview[] = [
-  { brand: "GreenBite Cafe", name: "Free Organic Coffee", points: 200, desc: "Enjoy a free organic coffee at GreenBite Cafe" },
-  { brand: "EcoSip", name: "Eco Meal Discount", points: 350, desc: "15% off on all eco-friendly meals at EcoSip" },
-]
-
-const CENTERS: Center[] = [
-  { name: "Greenway Recycling Center", addr: "123 Eco Street, Suite 100", dist: "0.8 mi", icon: "\u267B" },
-  { name: "E-Waste Collection Point", addr: "456 Green Avenue", dist: "1.2 mi", icon: "\uD83D\uDDF3" },
-  { name: "Waste Pickup Station", addr: "789 Sustainability Blvd", dist: "2.1 mi", icon: "\uD83D\uDEE1" },
-]
-
 function computeCo2(scans: number): string {
   return (scans * 0.4).toFixed(1)
+}
+
+function getAchievements(scans: number, points: number, materials: Record<string, number>): Achievement[] {
+  return ACHIEVEMENTS.map((a) => ({
+    id: a.id,
+    name: a.name,
+    desc: a.desc,
+    icon: a.icon,
+    unlocked: a.check(scans, points, materials),
+  }))
 }
 
 export default function DashboardPage() {
   const { data: session } = useSession()
   const [leaderboard, setLeaderboard] = useState<LeaderUser[]>([])
   const [breakdown, setBreakdown] = useState<ScanBreakdown[]>([])
+  const [trends, setTrends] = useState<TrendPoint[]>([])
   const [loading, setLoading] = useState(true)
   const [chartFilter, setChartFilter] = useState<"week" | "month" | "year">("week")
 
@@ -100,8 +64,14 @@ export default function DashboardPage() {
       .finally(() => setLoading(false))
   }, [])
 
+  useEffect(() => {
+    fetch(`/api/scans/trends?range=${chartFilter}`)
+      .then((r) => r.json())
+      .then((data) => setTrends(data.data ?? []))
+      .catch(() => {})
+  }, [chartFilter])
+
   const currentUser = leaderboard.find((u) => u.id === session?.user?.id)
-  const userRank = currentUser ? leaderboard.findIndex((u) => u.id === currentUser.id) + 1 : 0
   const totalScans = currentUser?.scans ?? 0
   const ecoPoints = currentUser?.points ?? 0
   const co2Saved = computeCo2(totalScans)
@@ -111,17 +81,46 @@ export default function DashboardPage() {
   const myBreakdown = breakdown.filter((b) => b.user_id === session?.user?.id)
   const weeklyItems = myBreakdown.reduce((sum, b) => sum + b.count, 0) || Math.min(totalScans, 24)
 
+  const materialCounts: Record<string, number> = {}
+  for (const b of myBreakdown) materialCounts[b.material] = (materialCounts[b.material] || 0) + b.count
+
+  const achievements = getAchievements(totalScans, ecoPoints, materialCounts)
+  const unlockedCount = achievements.filter((a) => a.unlocked).length
+
   const greet = greeting()
   const name = session?.user?.name || "User"
 
-  // Chart data depends on filter
-  const baseData = [30, 45, 22, 58, 41, 63, 37]
-  const chartData =
-    chartFilter === "week"
-      ? baseData
-      : baseData.map((v) => Math.floor(v * (0.7 + Math.random() * 0.6)))
-  const chartMax = Math.max(...chartData)
-  const chartLabels = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
+  // Build chart from real trends data
+  const chartData: number[] = []
+  const chartLabels: string[] = []
+
+  if (chartFilter === "week") {
+    const byDay: Record<string, number> = {}
+    for (const t of trends) if (t.day !== undefined) byDay[t.day] = t.count
+    for (let i = 0; i < 7; i++) {
+      chartData.push(byDay[String(i)] ?? 0)
+      chartLabels.push(DAY_NAMES[i])
+    }
+  } else if (chartFilter === "month") {
+    const byDay: Record<string, number> = {}
+    for (const t of trends) if (t.day !== undefined) byDay[t.day] = t.count
+    const daysInMonth = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate()
+    for (let i = 1; i <= daysInMonth; i++) {
+      const key = String(i).padStart(2, "0")
+      chartData.push(byDay[key] ?? 0)
+      chartLabels.push(String(i))
+    }
+  } else {
+    const byMonth: Record<string, number> = {}
+    for (const t of trends) if (t.month !== undefined) byMonth[t.month] = t.count
+    for (let i = 1; i <= 12; i++) {
+      const key = String(i).padStart(2, "0")
+      chartData.push(byMonth[key] ?? 0)
+      chartLabels.push(MONTH_NAMES[i - 1])
+    }
+  }
+
+  const chartMax = Math.max(...chartData, 1)
 
   const topUsers = leaderboard.slice(0, 3)
 
@@ -129,25 +128,17 @@ export default function DashboardPage() {
     <div>
       {/* ── Hero Card ── */}
       <div className="hero-card">
-        <div className="hero-greeting">
-          {greet}, {name} &#127793;
-        </div>
-        <div className="hero-name">
-          You recycled {weeklyItems} item{weeklyItems !== 1 ? "s" : ""} this week.
-        </div>
-        <div className="hero-sub">
-          &ldquo;The greatest threat to our planet is the belief that someone else will save it.&rdquo;
-        </div>
-        <div className="hero-streak">
-          &#127793; {totalItemsRecycled} items recycled
-        </div>
+        <div className="hero-greeting">{greet}, {name} 🌱</div>
+        <div className="hero-name">You recycled {weeklyItems} item{weeklyItems !== 1 ? "s" : ""} this week.</div>
+        <div className="hero-sub">&ldquo;The greatest threat to our planet is the belief that someone else will save it.&rdquo;</div>
+        <div className="hero-streak">♻️ {totalItemsRecycled} items recycled total</div>
       </div>
 
       {/* ── Tree Card ── */}
       <div className="card" style={{ marginBottom: 24, padding: "24px 0", textAlign: "center" }}>
         <TreeAnimation points={ecoPoints} />
         <p style={{ marginTop: 4, fontSize: 13, color: "var(--grey-500)" }}>
-          {ecoPoints >= 700 ? "🌲 Fully Grown!" 
+          {ecoPoints >= 700 ? "🌲 Fully Grown!"
             : ecoPoints >= 350 ? `🌳 ${700 - ecoPoints} pts to Fully Grown`
             : ecoPoints >= 150 ? `🌿 ${350 - ecoPoints} pts to Growing`
             : ecoPoints >= 50 ? `🌱 ${150 - ecoPoints} pts to Sapling`
@@ -158,31 +149,23 @@ export default function DashboardPage() {
       {/* ── Stats Grid ── */}
       <div className="grid-4" style={{ marginBottom: 24 }}>
         <div className="stat-card">
-          <div className="stat-icon green">&#9733;</div>
-          <div className="stat-value">
-            {loading ? "..." : ecoPoints.toLocaleString()}
-          </div>
+          <div className="stat-icon green">★</div>
+          <div className="stat-value">{loading ? "..." : ecoPoints.toLocaleString()}</div>
           <div className="stat-label">EcoPoints</div>
         </div>
         <div className="stat-card">
-          <div className="stat-icon mint">&#9850;</div>
-          <div className="stat-value">
-            {loading ? "..." : (ecoPoints * 2.5).toLocaleString()}
-          </div>
+          <div className="stat-icon mint">◎</div>
+          <div className="stat-value">{loading ? "..." : (ecoPoints * 2.5).toLocaleString()}</div>
           <div className="stat-label">Sustainability XP</div>
         </div>
         <div className="stat-card">
-          <div className="stat-icon blue">&#9851;</div>
-          <div className="stat-value">
-            {loading ? "..." : co2Saved}
-          </div>
-          <div className="stat-label">CO&#8322; Saved (kg)</div>
+          <div className="stat-icon blue">♻</div>
+          <div className="stat-value">{loading ? "..." : co2Saved}</div>
+          <div className="stat-label">CO₂ Saved (kg)</div>
         </div>
         <div className="stat-card">
-          <div className="stat-icon green">&#9850;</div>
-          <div className="stat-value">
-            {loading ? "..." : wasteRecycled.toLocaleString()}
-          </div>
+          <div className="stat-icon green">◎</div>
+          <div className="stat-value">{loading ? "..." : wasteRecycled.toLocaleString()}</div>
           <div className="stat-label">Waste Recycled</div>
         </div>
       </div>
@@ -190,33 +173,20 @@ export default function DashboardPage() {
       {/* ── Quick Actions ── */}
       <div className="quick-actions">
         <button className="qaction" onClick={() => window.location.href = "/scan"}>
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
-            <circle cx="12" cy="12" r="3" />
-          </svg>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" /><circle cx="12" cy="12" r="3" /></svg>
           Scan Waste
         </button>
         <button className="qaction" onClick={() => window.location.href = "/rewards"}>
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <circle cx="12" cy="12" r="10" />
-            <path d="M8 12l2 2 4-4" />
-          </svg>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10" /><path d="M8 12l2 2 4-4" /></svg>
           Redeem Rewards
         </button>
         <button className="qaction" onClick={() => window.location.href = "/leaderboard"}>
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <line x1="18" y1="20" x2="18" y2="10" />
-            <line x1="12" y1="20" x2="12" y2="4" />
-            <line x1="6" y1="20" x2="6" y2="14" />
-          </svg>
-          View Analytics
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="20" x2="18" y2="10" /><line x1="12" y1="20" x2="12" y2="4" /><line x1="6" y1="20" x2="6" y2="14" /></svg>
+          View Leaderboard
         </button>
-        <button className="qaction" onClick={() => window.location.href = "/leaderboard"}>
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
-            <circle cx="12" cy="10" r="3" />
-          </svg>
-          Find Centers
+        <button className="qaction" onClick={() => window.location.href = "/profile"}>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" /><circle cx="12" cy="7" r="4" /></svg>
+          My Profile
         </button>
       </div>
 
@@ -224,10 +194,7 @@ export default function DashboardPage() {
       <div className="scanner-cta" onClick={() => window.location.href = "/scan"}>
         <div className="scanner-cta-left">
           <div className="scan-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
-              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
-              <circle cx="12" cy="12" r="3" />
-            </svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" /><circle cx="12" cy="12" r="3" /></svg>
           </div>
           <div>
             <h3>AI Waste Scanner</h3>
@@ -237,17 +204,13 @@ export default function DashboardPage() {
         <div className="scan-badge">Start Smart Scan</div>
       </div>
 
-      {/* ── Weekly Activity Chart ── */}
+      {/* ── Real Activity Chart ── */}
       <div className="card" style={{ marginBottom: 24 }}>
         <div className="card-header">
-          <span className="card-title">Weekly Activity</span>
+          <span className="card-title">Recycling Trends</span>
           <div className="filter-group">
             {(["week", "month", "year"] as const).map((f) => (
-              <button
-                key={f}
-                className={`filter-btn${chartFilter === f ? " active" : ""}`}
-                onClick={() => setChartFilter(f)}
-              >
+              <button key={f} className={`filter-btn${chartFilter === f ? " active" : ""}`} onClick={() => setChartFilter(f)}>
                 {f.charAt(0).toUpperCase() + f.slice(1)}
               </button>
             ))}
@@ -255,44 +218,48 @@ export default function DashboardPage() {
         </div>
         <div className="chart">
           {chartData.map((v, i) => (
-            <div key={i} className="chart-bar">
+            <div key={i} className="chart-bar" title={`${chartLabels[i]}: ${v} scans`}>
               <div className="bar" style={{ height: `${(v / chartMax) * 100}%` }} />
               <div className="bar-value">{v}</div>
               <div className="bar-label">{chartLabels[i]}</div>
             </div>
           ))}
         </div>
+        {trends.length === 0 && !loading && (
+          <div style={{ textAlign: "center", padding: 8, fontSize: 13, color: "var(--grey-400)" }}>No scan data yet — start scanning to see your trends</div>
+        )}
       </div>
 
-      {/* ── Recent Activity + Achievements ── */}
+      {/* ── Material Breakdown + Achievements ── */}
       <div className="grid-2" style={{ marginBottom: 24 }}>
         <div className="card">
           <div className="card-header">
-            <span className="card-title">Recent Activity</span>
-            <span className="card-link">View All</span>
+            <span className="card-title">Material Breakdown</span>
           </div>
-          {EMPTY_ACTIVITY.map((a, i) => (
-            <div key={i} className="activity-item">
-              <div className={`activity-dot ${a.dot}`} />
-              <div className="activity-content">
-                <div className="activity-title">{a.title}</div>
-                <div className="activity-time">{a.time}</div>
+          {myBreakdown.length === 0 ? (
+            <div style={{ padding: 16, textAlign: "center", color: "var(--grey-400)", fontSize: 13 }}>No scans yet</div>
+          ) : (
+            myBreakdown.map((b) => (
+              <div key={b.material} className="activity-item">
+                <div className={`activity-dot ${b.material === "Plastic" ? "green" : b.material === "Metal" ? "mint" : b.material === "Glass" ? "blue" : "green"}`} />
+                <div className="activity-content">
+                  <div className="activity-title">{b.material}</div>
+                  <div className="activity-time">{b.count} scan{b.count !== 1 ? "s" : ""}</div>
+                </div>
+                <div className="activity-points">{b.count}</div>
               </div>
-              <div className="activity-points">{a.points}</div>
-            </div>
-          ))}
+            ))
+          )}
         </div>
         <div className="card">
           <div className="card-header">
             <span className="card-title">Achievements</span>
-            <span className="card-link">View All</span>
+            <span className="card-link">{unlockedCount}/{achievements.length}</span>
           </div>
           <div className="badge-grid">
-            {ACHIEVEMENTS.map((a) => (
-              <div key={a.name} className={`badge-item${a.unlocked ? "" : " locked"}`}>
-                <div className={`badge-icon${a.unlocked ? " unlocked" : " locked"}`}>
-                  {a.icon}
-                </div>
+            {achievements.slice(0, 8).map((a) => (
+              <div key={a.id} className={`badge-item${a.unlocked ? "" : " locked"}`}>
+                <div className={`badge-icon${a.unlocked ? " unlocked" : " locked"}`}>{a.icon}</div>
                 <div className="badge-name">{a.name}</div>
               </div>
             ))}
@@ -300,19 +267,15 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      {/* ── Reward Marketplace ── */}
+      {/* ── Reward Marketplace Preview ── */}
       <div className="section-title">Reward Marketplace</div>
       <div className="reward-grid" style={{ marginBottom: 24 }}>
-        {REWARD_PREVIEWS.map((r, i) => (
-          <div key={i} className="reward-card">
-            <div className="reward-brand">{r.brand}</div>
-            <div className="reward-name">{r.name}</div>
-            <div className="reward-points">
-              <strong>{r.points}</strong> EcoPoints
-            </div>
-            <button className="reward-btn" onClick={() => window.location.href = "/rewards"}>
-              Redeem Now
-            </button>
+        {REWARDS.slice(0, 4).map((r) => (
+          <div key={r.id} className="reward-card">
+            <div style={{ fontSize: 28, marginBottom: 4 }}>{r.emoji}</div>
+            <div className="reward-name" style={{ fontSize: 14 }}>{r.name}</div>
+            <div className="reward-points"><strong>{r.cost}</strong> EcoPoints</div>
+            <button className="reward-btn" onClick={() => window.location.href = "/rewards"}>Redeem Now</button>
           </div>
         ))}
       </div>
@@ -320,13 +283,7 @@ export default function DashboardPage() {
       {/* ── Leaderboard Preview ── */}
       <div className="flex-between" style={{ marginBottom: 16 }}>
         <span className="section-title" style={{ margin: 0 }}>Leaderboard</span>
-        <span
-          className="card-link"
-          onClick={() => window.location.href = "/leaderboard"}
-          style={{ cursor: "pointer" }}
-        >
-          View Full Leaderboard
-        </span>
+        <span className="card-link" onClick={() => window.location.href = "/leaderboard"} style={{ cursor: "pointer" }}>View Full Leaderboard</span>
       </div>
       <div className="card" style={{ marginBottom: 24 }}>
         {loading
@@ -350,38 +307,8 @@ export default function DashboardPage() {
               })}
       </div>
 
-      {/* ── Nearby Recycling Centers ── */}
-      <div className="section-title">Nearby Recycling Centers</div>
-      {CENTERS.slice(0, 2).map((c, i) => (
-        <div key={i} className="center-card" onClick={() => window.location.href = "/leaderboard"}>
-          <div className="center-icon">{c.icon}</div>
-          <div className="center-info">
-            <div className="center-name">{c.name}</div>
-            <div className="center-addr">{c.addr}</div>
-          </div>
-          <div className="center-dist">{c.dist}</div>
-        </div>
-      ))}
-      <div className="flex-between" style={{ marginTop: 12 }}>
-        <span />
-        <span
-          className="card-link"
-          onClick={() => window.location.href = "/leaderboard"}
-          style={{ cursor: "pointer" }}
-        >
-          Open Full Map
-        </span>
-      </div>
-
       {/* ── Footer ── */}
-      <div
-        style={{
-          textAlign: "center",
-          padding: "24px 0 12px",
-          color: "var(--grey-400)",
-          fontSize: 12,
-        }}
-      >
+      <div style={{ textAlign: "center", padding: "24px 0 12px", color: "var(--grey-400)", fontSize: 12 }}>
         EcoSort AI &copy; 2026 &bull; Making sustainability rewarding
       </div>
     </div>
