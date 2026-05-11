@@ -1,36 +1,96 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# EcosysAI ♻️
 
-## Getting Started
+**Scan waste → know your bin → earn points → grow a tree.**
 
-First, run the development server:
+A web app built for a hackathon — helps people figure out if something is recyclable, which bin to toss it in, and rewards them for doing it right.
+
+---
+
+## What it does
+
+- **AI waste recognition** — take a photo of your trash, the app tells you what it's made of (plastic, metal, paper, glass, or food waste) with a confidence score
+- **Point system** — earn points based on material (plastic = 10, metal/glass = 5, paper = 3, food = 2)
+- **Google sign-in** — simple login to save your scans and points
+- **Leaderboard** — see who's recycling the most, updated live
+- **Growing tree** — your tree grows from a seed to a fully grown tree as your points go up (0 / 50 / 150 / 350 / 700)
+- **Motivational facts** — cycling waste facts so you learn while you sort
+- **Consistency check** — upload a photo of your segregated waste, a judge approves it for 5 bonus points
+- **Mock rewards** — redeem points for things like a coffee discount or an eco tote bag (fake QR code — no real payments)
+
+---
+
+## Built with
+
+| What | Why |
+|------|-----|
+| **Next.js 16** | Full-stack React framework — frontend + API routes in one project |
+| **TypeScript** | Because `any` is a code smell |
+| **Tailwind CSS v4** | Fast styling with a custom earthy color palette built into the theme |
+| **SQLite** | Zero-setup database, single file, perfect for a hackathon |
+| **NextAuth.js** | Google OAuth login in a few lines of config |
+| **Groq (llama-3.2-90b-vision)** | Free vision AI to classify waste from photos |
+| **Lucide React** | Clean open-source icons |
+| **Fraunces + Inter** | Serif headings + sans-serif body — looks good, loads fast |
+| **Framer Motion** | Smooth tree transitions and micro-animations |
+| **Vercel** | One-click deploy from GitHub |
+
+---
+
+## Getting started
+
+```bash
+git clone https://github.com/technoversee/EcosysAI.git
+cd EcosysAI
+npm install
+```
+
+Create a `.env.local` file:
+
+```env
+GROQ_API_KEY=your_key_here
+AUTH_SECRET=your_secret
+AUTH_GOOGLE_ID=your_google_client_id
+AUTH_GOOGLE_SECRET=your_google_client_secret
+```
+
+Then:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Project structure
 
-## Learn More
+```
+src/
+├── app/
+│   ├── api/          # Backend API routes
+│   ├── scan/         # Camera / upload page
+│   ├── leaderboard/  # Rankings
+│   ├── rewards/      # Mock shop
+│   ├── profile/      # User profile + tree
+│   └── admin/        # Judge approval panel
+├── components/       # Reusable UI bits
+├── lib/              # DB, AI, auth, constants
+└── styles/           # Tailwind globals
+```
 
-To learn more about Next.js, take a look at the following resources:
+---
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Scripts
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+| Script | What it does |
+|--------|-------------|
+| `npm run dev` | Start dev server |
+| `npm run build` | Production build |
+| `npm run lint` | Check for lint issues |
+| `start.bat` | Launch the app (Windows) |
+| `stop.bat` | Kill the server (Windows) |
 
-## Deploy on Vercel
+---
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Made in a hurry for a hackathon. Probably has bugs. Use at your own risk 🌱
