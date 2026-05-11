@@ -592,6 +592,7 @@ export default function LandingPage() {
             <div className="hero-buttons" style={{ display: "flex", gap: 16, flexWrap: "wrap" }}>
               <button
                 className="btn-primary"
+                onClick={() => router.push("/login")}
                 style={{
                   display: "inline-flex", alignItems: "center", gap: 8,
                   fontSize: 16, fontWeight: 600, padding: "16px 32px",
@@ -610,6 +611,7 @@ export default function LandingPage() {
               </button>
               <button
                 className="btn-secondary"
+                onClick={() => router.push("/login")}
                 style={{
                   display: "inline-flex", alignItems: "center", gap: 8,
                   fontSize: 16, fontWeight: 600, padding: "16px 32px",
@@ -898,6 +900,7 @@ export default function LandingPage() {
             <div style={{ display: "flex", gap: 16, justifyContent: "center", flexWrap: "wrap" }}>
               <button
                 className="btn-primary"
+                onClick={() => router.push("/login")}
                 style={{
                   display: "inline-flex", alignItems: "center", gap: 8,
                   fontSize: 16, fontWeight: 600, padding: "16px 32px",
@@ -910,6 +913,7 @@ export default function LandingPage() {
               </button>
               <button
                 className="btn-secondary"
+                onClick={() => router.push("/login")}
                 style={{
                   display: "inline-flex", alignItems: "center", gap: 8,
                   fontSize: 16, fontWeight: 600, padding: "16px 32px",
@@ -920,7 +924,7 @@ export default function LandingPage() {
                   boxShadow: "0 2px 8px var(--shadow-1)",
                 }}
               >
-                <span style={{ position: "relative", zIndex: 1 }}>Talk to Sales</span>
+                <span style={{ position: "relative", zIndex: 1 }}>Get Started</span>
               </button>
             </div>
           </div>

@@ -194,7 +194,7 @@ export default function AuthPage() {
       if (res?.error) {
         setLoginError("Invalid email")
       } else {
-        router.push("/")
+        router.push("/dashboard")
         router.refresh()
       }
     } catch {
@@ -222,7 +222,7 @@ export default function AuthPage() {
       if (res?.error) {
         setSignupError("Signup failed. Please try again.")
       } else {
-        router.push("/")
+        router.push("/dashboard")
         router.refresh()
       }
     } catch {
