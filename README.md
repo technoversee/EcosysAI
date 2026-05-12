@@ -2,7 +2,7 @@
 
 An AI-driven web application that identifies waste materials from photographs, guides users to the correct disposal bin, and rewards proper segregation with redeemable brand vouchers.
 
-Built by **Team Technoverse** for the Smart India Hackathon 2026 — Environment Domain.
+Built by **Team Technoverse** for the Aavishkar Pravah 2.0 — Environment Domain.
 
 Live at: [https://ecosys-ai.vercel.app](https://ecosys-ai.vercel.app)
 
@@ -410,6 +410,6 @@ src/
 
 ---
 
-Built by Team Technoverse · Smart India Hackathon 2026 · Environment Domain
+Built by Team Technoverse · Aavishkar Pravah 2.0 · Environment Domain
 
 [ecosys-ai.vercel.app](https://ecosys-ai.vercel.app) · [github.com/technoversee/EcosysAI](https://github.com/technoversee/EcosysAI)
