@@ -264,7 +264,7 @@ export default function AuthPage() {
       >
         <Link href="/" className="nav-logo" style={{ display: "flex", alignItems: "center", gap: 10, fontWeight: 700, fontSize: 17, color: "var(--grey-800)", textDecoration: "none" }}>
           <LogoSvg size={28} />
-          EcoSort AI
+          EcosysAI
         </Link>
         <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
           <button
@@ -406,7 +406,7 @@ export default function AuthPage() {
             </div>
             <div className="auth-illustration-text" style={{ maxWidth: 380 }}>
               <h2 style={{ fontSize: 28, fontWeight: 800, color: "var(--grey-900)", marginBottom: 12, letterSpacing: "-0.02em" }}>
-                Join <span style={{ background: "linear-gradient(135deg, var(--emerald), var(--mint))", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>EcoSort AI</span>
+                Join <span style={{ background: "linear-gradient(135deg, var(--emerald), var(--mint))", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>EcosysAI</span>
               </h2>
               <p style={{ fontSize: 15, color: "var(--grey-500)", lineHeight: 1.7 }}>
                 Empowering communities with AI-driven waste segregation for a smarter, greener future.
@@ -448,7 +448,7 @@ export default function AuthPage() {
             >
               <div className="auth-card-header" style={{ textAlign: "center", marginBottom: 36 }}>
                 <h1 style={{ fontSize: 30, fontWeight: 800, color: "var(--grey-900)", letterSpacing: "-0.02em", marginBottom: 8 }}>Welcome Back</h1>
-                <p style={{ fontSize: 15, color: "var(--grey-500)", lineHeight: 1.6 }}>Continue your sustainability journey with EcoSort AI.</p>
+                <p style={{ fontSize: 15, color: "var(--grey-500)", lineHeight: 1.6 }}>Continue your sustainability journey with EcosysAI.</p>
               </div>
               <form onSubmit={handleLogin} className="auth-form" style={{ display: "flex", flexDirection: "column", gap: 20 }}>
                 <div className="input-group">

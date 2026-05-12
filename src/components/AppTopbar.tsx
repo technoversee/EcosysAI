@@ -14,7 +14,7 @@ function useTheme() {
   const toggle = useCallback(() => {
     const next = !document.documentElement.classList.contains("dark")
     document.documentElement.classList.toggle("dark", next)
-    localStorage.setItem("ecosort-theme", next ? "dark" : "light")
+    localStorage.setItem("ecosys-theme", next ? "dark" : "light")
     setDark(next)
   }, [])
 
@@ -51,7 +51,7 @@ export default function AppTopbar({ onNotifClick }: { onNotifClick?: () => void 
           <circle cx="16" cy="16" r="3" fill="var(--emerald-light)" />
           <defs><linearGradient id="logo-grad-t" x1="0" y1="0" x2="32" y2="32"><stop offset="0%" stopColor="var(--emerald)" /><stop offset="100%" stopColor="var(--mint)" /></linearGradient></defs>
         </svg>
-        <span style={{ fontWeight: 700, fontSize: 16, color: "var(--grey-800)", marginLeft: 8 }}>EcoSort AI</span>
+        <span style={{ fontWeight: 700, fontSize: 16, color: "var(--grey-800)", marginLeft: 8 }}>EcosysAI</span>
       </div>
       <div className="topbar-actions">
         <button className="topbar-btn" onClick={onNotifClick}>

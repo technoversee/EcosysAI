@@ -14,7 +14,7 @@ export default function NatureBackground() {
   useEffect(() => {
     function check() {
       try {
-        const saved = localStorage.getItem("ecosort-settings")
+        const saved = localStorage.getItem("ecosys-settings")
         if (saved) {
           const parsed = JSON.parse(saved)
           setVisible(!!parsed.natureBg)

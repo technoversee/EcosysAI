@@ -354,7 +354,7 @@ export default function LandingPage() {
       >
         <Link href="/" className="nav-logo" style={{ display: "flex", alignItems: "center", gap: 10, fontWeight: 700, fontSize: 17, color: "var(--grey-800)", textDecoration: "none" }}>
           <LogoSvg size={28} />
-          EcoSort AI
+          EcosysAI
         </Link>
         <div className="nav-links" style={{ display: "flex", alignItems: "center", gap: 28 }}>
           {["Features", "How It Works", "Impact", "About"].map((item) => (
@@ -559,7 +559,7 @@ export default function LandingPage() {
               }}
             >
               <span style={{ display: "inline-block", width: 6, height: 6, borderRadius: "50%", background: "var(--emerald)", animation: "pulse-dot 2s ease-in-out infinite" }} />
-              Powered by EcoSort AI
+              Powered by EcosysAI
             </div>
             <h1
               style={{
@@ -782,7 +782,7 @@ export default function LandingPage() {
               Simple steps,<br />massive impact
             </h2>
             <p style={{ fontSize: 17, color: "var(--grey-500)", lineHeight: 1.7 }}>
-              From waste scanning to earning rewards, EcoSort AI makes sustainability effortless.
+              From waste scanning to earning rewards, EcosysAI makes sustainability effortless.
             </p>
           </div>
           <div
@@ -951,7 +951,7 @@ export default function LandingPage() {
             <div className="footer-brand">
               <a href="/" className="nav-logo" style={{ display: "flex", alignItems: "center", gap: 10, fontWeight: 700, fontSize: 17, color: "#fff", textDecoration: "none", marginBottom: 16 }}>
                 <LogoSvg size={30} />
-                EcoSort AI
+                EcosysAI
               </a>
               <p style={{ fontSize: 14, color: "var(--grey-500)", lineHeight: 1.7, maxWidth: 320 }}>
                 Empowering communities with AI-driven waste segregation and sustainability rewards for a greener tomorrow.
@@ -1000,7 +1000,7 @@ export default function LandingPage() {
             {[
               { title: "Product", links: ["Features", "Pricing", "Integrations", "Changelog"] },
               { title: "Company", links: ["About", "Blog", "Careers", "Press"] },
-              { title: "Contact", links: ["hello@ecosort.ai", "+1 (555) 123-4567", "Support Center", "Terms & Privacy"] },
+              { title: "Contact", links: ["hello@ecosys.ai", "+1 (555) 123-4567", "Support Center", "Terms & Privacy"] },
             ].map((col) => (
               <div key={col.title} className="footer-col">
                 <h4 style={{ fontSize: 13, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.08em", color: "var(--grey-700)", marginBottom: 20 }}>{col.title}</h4>
@@ -1021,10 +1021,10 @@ export default function LandingPage() {
             <blockquote style={{ fontSize: 15, fontStyle: "italic", color: "var(--grey-500)", maxWidth: 500, margin: "0 auto 12px" }}>
               &ldquo;The greatest threat to our planet is the belief that someone else will save it.&rdquo;
             </blockquote>
-            <cite style={{ fontSize: 13, color: "var(--grey-400)", fontStyle: "normal" }}>&mdash; EcoSort AI, Building a Greener Future</cite>
+            <cite style={{ fontSize: 13, color: "var(--grey-400)", fontStyle: "normal" }}>&mdash; EcosysAI, Building a Greener Future</cite>
           </div>
           <div className="footer-bottom" style={{ textAlign: "center", marginTop: 24, fontSize: 13, color: "var(--grey-400)" }}>
-            &copy; 2026 EcoSort AI. All rights reserved.
+            &copy; 2026 EcosysAI. All rights reserved.
           </div>
         </div>
       </footer>
