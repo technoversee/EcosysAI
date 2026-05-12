@@ -78,7 +78,8 @@ const MATERIAL_INFO: Record<string, { color: string; instructions: string[]; imp
 export default function ScanPage() {
   const router = useRouter()
   const { data: session } = useSession()
-  const fileRef = useRef<HTMLInputElement>(null)
+  const cameraRef = useRef<HTMLInputElement>(null)
+  const galleryRef = useRef<HTMLInputElement>(null)
   const [scanning, setScanning] = useState(false)
   const [preview, setPreview] = useState<string | null>(null)
   const [result, setResult] = useState<ScanResult | null>(null)
@@ -116,7 +117,8 @@ export default function ScanPage() {
       setScanning(false)
     }
 
-    if (fileRef.current) fileRef.current.value = ""
+    if (cameraRef.current) cameraRef.current.value = ""
+    if (galleryRef.current) galleryRef.current.value = ""
   }, [])
 
   const handleConfirm = useCallback(async () => {
@@ -214,11 +216,9 @@ export default function ScanPage() {
       <div className="section-title" style={{ marginTop: 0 }}>AI Waste Scanner</div>
 
       {/* ── Camera / Image Area ── */}
-      <div className="camera-view" id="cameraView"
-        onClick={() => !scanning && !result && fileRef.current?.click()}
-        style={{ cursor: scanning || result ? "default" : "pointer" }}
-      >
-        <input ref={fileRef} type="file" accept="image/*" capture="environment" onChange={handleScan} style={{ display: "none" }} />
+      <div className="camera-view" id="cameraView" style={{ cursor: scanning || result ? "default" : "pointer" }}>
+        <input ref={cameraRef} type="file" accept="image/*" capture="environment" onChange={handleScan} style={{ display: "none" }} />
+        <input ref={galleryRef} type="file" accept="image/*" onChange={handleScan} style={{ display: "none" }} />
         {!preview && !scanning && !result && (
           <div className="placeholder-cam">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
@@ -239,6 +239,32 @@ export default function ScanPage() {
           </div>
         )}
       </div>
+
+      {/* ── Camera / Gallery Buttons ── */}
+      {!result && !scanning && (
+        <div style={{ display: "flex", gap: 12, marginBottom: 20 }}>
+          <button onClick={() => cameraRef.current?.click()} style={{
+            flex: 1, padding: "12px 16px", borderRadius: "var(--radius-sm)", border: "1.5px dashed var(--emerald)",
+            background: "var(--glass)", cursor: "pointer", fontFamily: "inherit", fontSize: 14, fontWeight: 600,
+            color: "var(--emerald)", display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
+          }}>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" /><circle cx="12" cy="13" r="4" />
+            </svg>
+            Open Camera
+          </button>
+          <button onClick={() => galleryRef.current?.click()} style={{
+            flex: 1, padding: "12px 16px", borderRadius: "var(--radius-sm)", border: "1.5px dashed var(--grey-300)",
+            background: "var(--glass)", cursor: "pointer", fontFamily: "inherit", fontSize: 14, fontWeight: 500,
+            color: "var(--grey-600)", display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
+          }}>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <rect x="3" y="3" width="18" height="18" rx="2" ry="2" /><circle cx="8.5" cy="8.5" r="1.5" /><polyline points="21 15 16 10 5 21" />
+            </svg>
+            Choose Photo
+          </button>
+        </div>
+      )}
 
       {scanning && (
         <div style={{ textAlign: "center", padding: 16, color: "var(--grey-500)", fontSize: 14 }}>
