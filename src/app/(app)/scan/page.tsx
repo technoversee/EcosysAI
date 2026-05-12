@@ -99,6 +99,13 @@ export default function ScanPage() {
     }
   }, [])
 
+  // Attach stream to video element once camera becomes active and <video> is rendered
+  useEffect(() => {
+    if (cameraActive && videoRef.current && streamRef.current) {
+      videoRef.current.srcObject = streamRef.current
+    }
+  }, [cameraActive])
+
   const openCamera = useCallback(async () => {
     setError("")
     try {
@@ -108,9 +115,6 @@ export default function ScanPage() {
       })
       streamRef.current = stream
       setCameraActive(true)
-      if (videoRef.current) {
-        videoRef.current.srcObject = stream
-      }
     } catch {
       setError("Camera access denied. Please allow camera permission or choose a photo from gallery.")
     }
@@ -156,7 +160,7 @@ export default function ScanPage() {
       const res = await fetch("/api/classify", { method: "POST", body: formData })
       if (!res.ok) {
         const err = await res.json()
-        throw new Error(err.error || "Classification failed")
+        throw new Error(err.detail || err.error || "Classification failed")
       }
       const data = await res.json()
       setResult(data)

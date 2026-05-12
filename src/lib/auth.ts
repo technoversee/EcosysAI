@@ -23,13 +23,13 @@ export const authConfig: NextAuthConfig = {
         const name = credentials?.name as string
         if (!email) return null
 
-        const db = getDb()
-        let user = db.prepare("SELECT * FROM users WHERE email = ?").get(email) as any
+        const db = await getDb()
+        let user = (await db.execute({ sql: "SELECT * FROM users WHERE email = ?", args: [email] })).rows[0] as any
 
         if (!user) {
           const id = crypto.randomUUID()
-          db.prepare("INSERT INTO users (id, name, email) VALUES (?, ?, ?)").run(id, name || email.split("@")[0], email)
-          user = db.prepare("SELECT * FROM users WHERE id = ?").get(id)
+          await db.execute({ sql: "INSERT INTO users (id, name, email) VALUES (?, ?, ?)", args: [id, name || email.split("@")[0], email] })
+          user = (await db.execute({ sql: "SELECT * FROM users WHERE id = ?", args: [id] })).rows[0] as any
         }
 
         return { id: user.id, name: user.name, email: user.email, image: user.image }

@@ -14,8 +14,8 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Missing scanId" }, { status: 400 })
     }
 
-    const db = getDb()
-    const scan = db.prepare("SELECT * FROM scans WHERE id = ? AND user_id = ?").get(scanId, session.user.id) as any
+    const db = await getDb()
+    const scan = (await db.execute({ sql: "SELECT * FROM scans WHERE id = ? AND user_id = ?", args: [scanId, session.user.id] })).rows[0] as any
     if (!scan) {
       return NextResponse.json({ error: "Scan not found" }, { status: 404 })
     }
@@ -24,10 +24,10 @@ export async function POST(req: NextRequest) {
     }
 
     // Award the points
-    db.prepare("UPDATE scans SET confirmed = 1 WHERE id = ?").run(scanId)
-    db.prepare("UPDATE users SET points = points + ? WHERE id = ?").run(scan.points_awarded, session.user.id)
+    await db.execute({ sql: "UPDATE scans SET confirmed = 1 WHERE id = ?", args: [scanId] })
+    await db.execute({ sql: "UPDATE users SET points = points + ? WHERE id = ?", args: [scan.points_awarded, session.user.id] })
 
-    const user = db.prepare("SELECT points FROM users WHERE id = ?").get(session.user.id) as any
+    const user = (await db.execute({ sql: "SELECT points FROM users WHERE id = ?", args: [session.user.id] })).rows[0] as any
 
     return NextResponse.json({
       success: true,

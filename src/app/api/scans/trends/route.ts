@@ -11,7 +11,7 @@ export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url)
   const range = searchParams.get("range") || "week"
 
-  const db = getDb()
+  const db = await getDb()
   const userId = session.user.id
 
   let sql: string
@@ -37,7 +37,7 @@ export async function GET(req: NextRequest) {
     params = [userId]
   }
 
-  const rows = db.prepare(sql).all(...params) as { count: number; day?: string; month?: string }[]
+  const { rows } = await db.execute({ sql, args: params })
 
   return NextResponse.json({ data: rows, range })
 }
