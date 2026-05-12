@@ -237,7 +237,7 @@ export default function AuthPage() {
       fontFamily: "'Inter', sans-serif",
       background: "var(--auth-bg)",
       color: "var(--grey-800)",
-      minHeight: "100vh",
+      minHeight: "100dvh",
       position: "relative",
     }}>
       {/* ── NAVBAR ── */}
@@ -308,7 +308,7 @@ export default function AuthPage() {
       <main
         style={{
           display: "flex", alignItems: "center", justifyContent: "center",
-          minHeight: "100vh", padding: "100px 24px 60px",
+          minHeight: "100dvh", padding: "100px 24px 60px",
           position: "relative", overflow: "hidden",
         }}
       >
