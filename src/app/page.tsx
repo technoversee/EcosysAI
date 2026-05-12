@@ -696,7 +696,7 @@ export default function LandingPage() {
       </section>
 
       {/* ── FEATURES ── */}
-      <section id="features" style={{ padding: "120px 0", background: "var(--bg)", transition: "background 0.4s" }}>
+      <section id="features" className="features" style={{ padding: "120px 0", background: "var(--bg)", transition: "background 0.4s" }}>
         <div className="container" style={{ maxWidth: 1200, margin: "0 auto", padding: "0 24px" }}>
           <div className="section-header reveal" style={{ textAlign: "center", maxWidth: 640, margin: "0 auto 64px" }}>
             <span style={{ display: "inline-block", fontSize: 13, fontWeight: 600, color: "var(--emerald)", textTransform: "uppercase", letterSpacing: "0.12em", marginBottom: 16 }}>
@@ -773,7 +773,7 @@ export default function LandingPage() {
       </section>
 
       {/* ── HOW IT WORKS ── */}
-      <section id="how-it-works" style={{ padding: "120px 0", background: "var(--how-bg)", transition: "background 0.6s" }}>
+      <section id="how-it-works" className="how-it-works" style={{ padding: "120px 0", background: "var(--how-bg)", transition: "background 0.6s" }}>
         <div className="container" style={{ maxWidth: 1200, margin: "0 auto", padding: "0 24px" }}>
           <div className="section-header reveal" style={{ textAlign: "center", maxWidth: 640, margin: "0 auto 64px" }}>
             <span style={{ display: "inline-block", fontSize: 13, fontWeight: 600, color: "var(--emerald)", textTransform: "uppercase", letterSpacing: "0.12em", marginBottom: 16 }}>
@@ -834,7 +834,7 @@ export default function LandingPage() {
       </section>
 
       {/* ── IMPACT ── */}
-      <section id="impact" style={{ padding: "120px 0", background: "var(--bg)", transition: "background 0.4s" }}>
+      <section id="impact" className="impact" style={{ padding: "120px 0", background: "var(--bg)", transition: "background 0.4s" }}>
         <div className="container" style={{ maxWidth: 1200, margin: "0 auto", padding: "0 24px" }}>
           <div className="section-header reveal" style={{ textAlign: "center", maxWidth: 640, margin: "0 auto 64px" }}>
             <span style={{ display: "inline-block", fontSize: 13, fontWeight: 600, color: "var(--emerald)", textTransform: "uppercase", letterSpacing: "0.12em", marginBottom: 16 }}>
@@ -886,7 +886,7 @@ export default function LandingPage() {
       </section>
 
       {/* ── CTA ── */}
-      <section style={{ padding: "100px 0", background: "var(--cta-bg)", transition: "background 0.6s" }}>
+      <section className="features" style={{ padding: "100px 0", background: "var(--cta-bg)", transition: "background 0.6s" }}>
         <div className="container" style={{ maxWidth: 1200, margin: "0 auto", padding: "0 24px" }}>
           <div className="reveal" style={{ textAlign: "center", maxWidth: 640, margin: "0 auto" }}>
             <span style={{ display: "inline-block", fontSize: 13, fontWeight: 600, color: "var(--emerald)", textTransform: "uppercase", letterSpacing: "0.12em", marginBottom: 16 }}>
@@ -933,7 +933,7 @@ export default function LandingPage() {
       </section>
 
       {/* ── FOOTER ── */}
-      <footer id="about" style={{ padding: "80px 0 32px", background: "var(--footer-bg)", position: "relative" }}>
+      <footer id="about" className="footer" style={{ padding: "80px 0 32px", background: "var(--footer-bg)", position: "relative" }}>
         <div
           style={{
             position: "absolute", top: 0, left: "50%", transform: "translateX(-50%)",
