@@ -28,8 +28,8 @@ export const metadata: Metadata = {
   description: "AI-powered waste segregation assistant for a cleaner planet.",
   manifest: "/manifest.json",
   icons: {
-    icon: "/logo.jpg",
-    apple: "/logo.jpg",
+    icon: { url: "/logo.jpg", sizes: "144x144", type: "image/jpeg" },
+    apple: { url: "/logo.jpg", sizes: "144x144" },
   },
 }
 
