@@ -327,7 +327,9 @@ ul { list-style: none; }
 .card:hover, .stat-card:hover, .reward-card:hover, .admin-card:hover,
 .lb-item:hover, .qaction:hover, .scanner-cta:hover,
 .nav-item:not(.logout):hover, .mob-nav-item:hover, .dd-item:hover,
-.setting-item:hover, .feature-card:hover, .step-card:hover { box-shadow: 0 0 0 1.5px var(--emerald); }
+.setting-item:hover, .feature-card:hover, .step-card:hover,
+.btn-primary:hover, .btn-secondary:hover, .reward-btn:hover,
+.filter-btn:hover, .admin-action:hover { outline: 2px solid #1a4a35; outline-offset: -1px; }
 
 ::-webkit-scrollbar { width: 8px; }
 ::-webkit-scrollbar-track { background: var(--bg); }
