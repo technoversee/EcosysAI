@@ -439,7 +439,7 @@ export default function LandingPage() {
       {/* ── MOBILE MENU ── */}
       <div
         style={{
-          position: "fixed", top: 0, left: 0, width: "100%", height: "100vh",
+          position: "fixed", top: 0, left: 0, width: "100%", height: "100dvh",
           background: "var(--mobile-bg)", backdropFilter: "blur(32px)",
           WebkitBackdropFilter: "blur(32px)", zIndex: 999,
           display: "flex", flexDirection: "column", alignItems: "center",
@@ -508,7 +508,7 @@ export default function LandingPage() {
         id="hero"
         style={{
           position: "relative",
-          minHeight: "100vh",
+          minHeight: "100dvh",
           display: "flex",
           alignItems: "center",
           padding: "140px 24px 80px",
