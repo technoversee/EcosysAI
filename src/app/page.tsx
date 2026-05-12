@@ -506,6 +506,7 @@ export default function LandingPage() {
       {/* ── HERO ── */}
       <section
         id="hero"
+        className="hero"
         style={{
           position: "relative",
           minHeight: "100dvh",
