@@ -1072,8 +1072,8 @@ ul { list-style: none; }
 
 /* ===== SCANNER ===== */
 .scanner-container { max-width: 520px; margin: 0 auto; text-align: center; }
-.camera-view { width: 100%; aspect-ratio: 3/4; border-radius: var(--radius-lg); background: var(--grey-900); position: relative; overflow: hidden; margin-bottom: 20px; display: flex; align-items: center; justify-content: center; }
-.camera-view .placeholder-cam { color: rgba(255,255,255,0.15); text-align: center; }
+.camera-view { width: 100%; aspect-ratio: 3/4; border-radius: var(--radius-lg); background: var(--glass); border: 1.5px dashed var(--grey-300); position: relative; overflow: hidden; margin-bottom: 20px; display: flex; align-items: center; justify-content: center; }
+.camera-view .placeholder-cam { color: var(--grey-400); text-align: center; }
 .camera-view .placeholder-cam svg { width: 64px; height: 64px; margin-bottom: 12px; }
 .camera-view .placeholder-cam p { font-size: 14px; }
 .scan-overlay { position: absolute; inset: 0; pointer-events: none; }
