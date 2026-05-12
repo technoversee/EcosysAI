@@ -50,7 +50,7 @@ const groups: SettingGroup[] = [
 
 function computeInitial(): Record<string, boolean> {
   if (typeof window === "undefined") return {}
-  const saved = localStorage.getItem("ecosort-settings")
+  const saved = localStorage.getItem("ecosys-settings")
   const initial: Record<string, boolean> = {}
   for (const group of groups) {
     for (const item of group.items) {
@@ -66,12 +66,12 @@ function useSettings() {
   useEffect(() => {
     if (settings.darkMode) {
       document.documentElement.classList.add("dark")
-      localStorage.setItem("ecosort-theme", "dark")
+      localStorage.setItem("ecosys-theme", "dark")
     } else {
       document.documentElement.classList.remove("dark")
-      localStorage.setItem("ecosort-theme", "light")
+      localStorage.setItem("ecosys-theme", "light")
     }
-    localStorage.setItem("ecosort-settings", JSON.stringify(settings))
+    localStorage.setItem("ecosys-settings", JSON.stringify(settings))
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   function toggle(id: string) {
@@ -79,9 +79,9 @@ function useSettings() {
       const next = { ...prev, [id]: !prev[id] }
       if (id === "darkMode") {
         document.documentElement.classList.toggle("dark", next.darkMode)
-        localStorage.setItem("ecosort-theme", next.darkMode ? "dark" : "light")
+        localStorage.setItem("ecosys-theme", next.darkMode ? "dark" : "light")
       }
-      localStorage.setItem("ecosort-settings", JSON.stringify(next))
+      localStorage.setItem("ecosys-settings", JSON.stringify(next))
       return next
     })
   }

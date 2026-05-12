@@ -309,7 +309,7 @@ export default function DashboardPage() {
 
       {/* ── Footer ── */}
       <div style={{ textAlign: "center", padding: "24px 0 12px", color: "var(--grey-400)", fontSize: 12 }}>
-        EcoSort AI &copy; 2026 &bull; Making sustainability rewarding
+        EcosysAI &copy; 2026 &bull; Making sustainability rewarding
       </div>
     </div>
   )

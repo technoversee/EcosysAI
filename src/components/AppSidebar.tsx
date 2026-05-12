@@ -29,7 +29,7 @@ export default function AppSidebar() {
           <circle cx="16" cy="16" r="3" fill="var(--emerald-light)" />
           <defs><linearGradient id="logo-grad-s" x1="0" y1="0" x2="32" y2="32"><stop offset="0%" stopColor="var(--emerald)" /><stop offset="100%" stopColor="var(--mint)" /></linearGradient></defs>
         </svg>
-        EcoSort AI
+        EcosysAI
       </div>
       <nav className="sidebar-nav">
         {navItems.map((item) => (

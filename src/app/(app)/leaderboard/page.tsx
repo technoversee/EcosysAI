@@ -138,9 +138,9 @@ export default function LeaderboardPage() {
           className="btn-secondary"
           style={{ flex: 1, padding: 14 }}
           onClick={() => {
-            const text = `I'm ranked #${myRank} on EcoSort AI with ${myUser?.points ?? 0} EcoPoints! Join me at`
+            const text = `I'm ranked #${myRank} on EcosysAI with ${myUser?.points ?? 0} EcoPoints! Join me at`
             if (navigator.share) {
-              navigator.share({ title: "EcoSort AI Leaderboard", text })
+              navigator.share({ title: "EcosysAI Leaderboard", text })
             } else {
               navigator.clipboard.writeText(text).then(() => alert("Rank copied to clipboard!"))
             }

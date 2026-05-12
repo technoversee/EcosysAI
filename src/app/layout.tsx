@@ -29,7 +29,7 @@ export default function RootLayout({
         <script dangerouslySetInnerHTML={{
           __html: `
             try {
-              var t = localStorage.getItem("ecosort-theme") || localStorage.getItem("theme");
+              var t = localStorage.getItem("ecosys-theme") || localStorage.getItem("theme");
               if (t === "dark" || (!t && window.matchMedia("(prefers-color-scheme: dark)").matches)) {
                 document.documentElement.classList.add("dark");
               }
