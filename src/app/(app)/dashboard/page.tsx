@@ -130,7 +130,7 @@ export default function DashboardPage() {
       <div className="hero-card">
         <div className="hero-greeting">{greet}, {name} 🌱</div>
         <div className="hero-name">You recycled {weeklyItems} item{weeklyItems !== 1 ? "s" : ""} this week.</div>
-        <div className="hero-sub">&ldquo;The greatest threat to our planet is the belief that someone else will save it.&rdquo;</div>
+        <div className="hero-sub" style={{ fontSize: 15, lineHeight: 1.6 }}>&ldquo;The greatest threat to our planet is the belief that someone else will save it.&rdquo;</div>
         <div className="hero-streak">♻️ {totalItemsRecycled} items recycled total</div>
       </div>
 
