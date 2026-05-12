@@ -33,7 +33,12 @@ export async function getDb(): Promise<Client> {
 async function runSchema() {
   const c = db
   try { await c.execute("PRAGMA journal_mode = WAL") } catch {}
-  try { await c.execute("PRAGMA foreign_keys = ON") } catch {}
+  // Only enforce FK constraints with Turso (shared DB across all function instances).
+  // In fallback mode (/tmp), each Vercel instance has its own DB file, so FK
+  // checks fail because users created on one instance don't exist on another.
+  if (process.env.TURSO_DB_URL) {
+    try { await c.execute("PRAGMA foreign_keys = ON") } catch {}
+  }
 
   await c.batch([
     `CREATE TABLE IF NOT EXISTS users (
