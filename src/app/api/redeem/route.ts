@@ -15,20 +15,21 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Reward not found" }, { status: 404 })
   }
 
-  const db = getDb()
-  const user = db.prepare("SELECT points FROM users WHERE id = ?").get(session.user.id) as any
+  const db = await getDb()
+  const user = (await db.execute({ sql: "SELECT points FROM users WHERE id = ?", args: [session.user.id] })).rows[0] as any
   if (!user || user.points < reward.cost) {
     return NextResponse.json({ error: "Not enough points" }, { status: 400 })
   }
 
-  db.prepare("UPDATE users SET points = points - ? WHERE id = ?").run(reward.cost, session.user.id)
+  await db.execute({ sql: "UPDATE users SET points = points - ? WHERE id = ?", args: [reward.cost, session.user.id] })
 
   const id = crypto.randomUUID()
-  db.prepare(
-    "INSERT INTO redemptions (id, user_id, reward_id, reward_name, cost) VALUES (?, ?, ?, ?, ?)"
-  ).run(id, session.user.id, reward.id, reward.name, reward.cost)
+  await db.execute({
+    sql: "INSERT INTO redemptions (id, user_id, reward_id, reward_name, cost) VALUES (?, ?, ?, ?, ?)",
+    args: [id, session.user.id, reward.id, reward.name, reward.cost],
+  })
 
-  const updated = db.prepare("SELECT points FROM users WHERE id = ?").get(session.user.id) as any
+  const updated = (await db.execute({ sql: "SELECT points FROM users WHERE id = ?", args: [session.user.id] })).rows[0] as any
 
   return NextResponse.json({
     success: true,

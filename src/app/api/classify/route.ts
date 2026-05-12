@@ -25,14 +25,15 @@ export async function POST(req: NextRequest) {
 
     const result = await classifyWasteImage(base64)
 
-    const db = getDb()
+    const db = await getDb()
     const scanId = crypto.randomUUID()
     const pts = POINTS[result.material] || 0
 
     // Save scan WITHOUT awarding points yet — user must confirm disposal first
-    db.prepare(
-      "INSERT INTO scans (id, user_id, material, confidence, points_awarded, image_data, confirmed) VALUES (?, ?, ?, ?, ?, ?, 0)"
-    ).run(scanId, session.user.id, result.material, result.confidence, pts, base64.slice(0, 2000))
+    await db.execute({
+      sql: "INSERT INTO scans (id, user_id, material, confidence, points_awarded, image_data, confirmed) VALUES (?, ?, ?, ?, ?, ?, 0)",
+      args: [scanId, session.user.id, result.material, result.confidence, pts, base64.slice(0, 2000)],
+    })
 
     return NextResponse.json({
       scanId,
