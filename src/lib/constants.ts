@@ -40,18 +40,21 @@ export const WASTE_FACTS = [
 ]
 
 export const REWARDS = [
-  { id: 1, name: "Recycled Notebook", cost: 30, emoji: "📓", description: "A5 notebook made from 100% post-consumer recycled paper" },
-  { id: 2, name: "Bamboo Toothbrush Set", cost: 50, emoji: "🪥", description: "Set of 4 biodegradable bamboo toothbrushes" },
-  { id: 3, name: "Reusable Produce Bags", cost: 75, emoji: "🛍️", description: "Set of 5 mesh produce bags, washable and plastic-free" },
-  { id: 4, name: "Seed Bomb Pack", cost: 100, emoji: "🌸", description: "10 wildflower seed bombs for guerilla gardening" },
-  { id: 5, name: "Stainless Steel Straw Set", cost: 120, emoji: "🥤", description: "4 stainless steel straws with cleaning brush" },
-  { id: 6, name: "Beeswax Food Wraps", cost: 150, emoji: "🍯", description: "3-pack reusable beeswax wraps, assorted sizes" },
-  { id: 7, name: "Solar Power Bank", cost: 200, emoji: "🔋", description: "10,000mAh solar-powered portable charger" },
-  { id: 8, name: "Compost Starter Kit", cost: 250, emoji: "🌱", description: "Countertop compost bin + starter bacteria pack" },
-  { id: 9, name: "Reusable Water Bottle", cost: 300, emoji: "🧴", description: "Double-wall insulated stainless steel, 750ml" },
-  { id: 10, name: "Eco Tote Bag", cost: 100, emoji: "👜", description: "Organic cotton tote, hand-printed with eco designs" },
-  { id: 11, name: "Bamboo Cutlery Set", cost: 80, emoji: "🥢", description: "Portable bamboo fork, knife, spoon, chopsticks + case" },
-  { id: 12, name: "Tree Planted in Your Name", cost: 500, emoji: "🌳", description: "We plant a native tree in your honor + GPS coordinates" },
+  // ── Entry level (50–300 pts = 5–30 bottles) ──
+  { id: 1, name: "₹20 Amazon Pay Voucher", cost: 150, emoji: "🛒", description: "Amazon Pay balance added to your account instantly" },
+  { id: 2, name: "₹50 Flipkart Gift Card", cost: 350, emoji: "📦", description: "Flipkart gift voucher — shop anything on the platform" },
+  { id: 3, name: "₹50 Zomato Food Credit", cost: 350, emoji: "🍕", description: "Zomato credit for your next food delivery order" },
+  { id: 4, name: "₹50 Amazon Pay Voucher", cost: 400, emoji: "🛒", description: "Amazon Pay balance — pay bills, shop, recharge" },
+  { id: 5, name: "₹100 Swiggy Money", cost: 700, emoji: "🍔", description: "Swiggy money for food delivery and dining out" },
+  // ── Mid tier (750–2000 pts) ──
+  { id: 6, name: "₹100 Amazon Pay Voucher", cost: 800, emoji: "🛒", description: "₹100 Amazon Pay — shop millions of products" },
+  { id: 7, name: "₹100 Flipkart Gift Card", cost: 800, emoji: "📦", description: "Flipkart voucher valid across all categories" },
+  { id: 8, name: "₹200 Amazon Pay Voucher", cost: 1500, emoji: "🛒", description: "₹200 Amazon Pay — bigger savings on your purchases" },
+  { id: 9, name: "₹250 Myntra Fashion Voucher", cost: 1800, emoji: "👕", description: "Myntra credit for fashion, accessories & more" },
+  // ── High tier (2500–5000 pts) ──
+  { id: 10, name: "₹500 Amazon Pay Voucher", cost: 3500, emoji: "🛒", description: "₹500 Amazon Pay — major reward for dedicated recyclers" },
+  { id: 11, name: "₹500 Flipkart Gift Card", cost: 3500, emoji: "📦", description: "₹500 Flipkart voucher — treat yourself" },
+  { id: 12, name: "₹1000 Amazon Pay Voucher", cost: 6500, emoji: "💎", description: "₹1,000 Amazon Pay — our premium reward for eco-champions" },
 ] as const
 
 export const ACHIEVEMENTS = [
@@ -69,6 +72,17 @@ export const ACHIEVEMENTS = [
   { id: "metal", name: "Metal Miner", desc: "Recycle 10 metal items", icon: "⚙️", check: (s: number, p: number, m?: Record<string, number>) => (m?.Metal ?? 0) >= 10 },
   { id: "food", name: "Compost King", desc: "Sort 10 food waste items", icon: "🍎", check: (s: number, p: number, m?: Record<string, number>) => (m?.["Food Waste"] ?? 0) >= 10 },
 ] as const
+
+export const NATURE_BACKGROUNDS = [
+  "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1920&q=80",
+  "https://images.unsplash.com/photo-1470071459604-7a7a0c1f0b9b?w=1920&q=80",
+  "https://images.unsplash.com/photo-1447752875215-b2761acb3c5d?w=1920&q=80",
+  "https://images.unsplash.com/photo-1504198453319-5ce911baf6e5?w=1920&q=80",
+  "https://images.unsplash.com/photo-1532274402911-5a369e4c4bb5?w=1920&q=80",
+  "https://images.unsplash.com/photo-1518173946687-a29c3c7b60b6?w=1920&q=80",
+  "https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=1920&q=80",
+  "https://images.unsplash.com/photo-1518495973-e2f4f5c0c3c0?w=1920&q=80",
+]
 
 export const MATERIAL_INFO: Record<string, { category: string; bin: string; color: string; tips: string[] }> = {
   Plastic: {

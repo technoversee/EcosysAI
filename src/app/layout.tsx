@@ -37,7 +37,7 @@ export default function RootLayout({
           `
         }} />
       </head>
-      <body className="min-h-dvh bg-background font-sans text-foreground">
+      <body className="min-h-dvh font-sans text-foreground">
         <Providers>
           {children}
         </Providers>

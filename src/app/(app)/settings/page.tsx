@@ -35,6 +35,7 @@ const groups: SettingGroup[] = [
     title: "Theme",
     items: [
       { label: "Dark Mode", desc: "Switch between light and dark theme", defaultOn: false, id: "darkMode" },
+      { label: "Nature Backgrounds", desc: "Rotating nature photos as background (changes every 40s)", defaultOn: false, id: "natureBg" },
     ],
   },
   {
