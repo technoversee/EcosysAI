@@ -26,6 +26,10 @@ const inter = Inter({
 export const metadata: Metadata = {
   title: "EcosysAI — Scan. Sort. Earn.",
   description: "AI-powered waste segregation assistant for a cleaner planet.",
+  icons: {
+    icon: "/logo.jpg",
+    apple: "/logo.jpg",
+  },
 }
 
 export default function RootLayout({
