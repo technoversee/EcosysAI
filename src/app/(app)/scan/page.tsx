@@ -78,21 +78,70 @@ const MATERIAL_INFO: Record<string, { color: string; instructions: string[]; imp
 export default function ScanPage() {
   const router = useRouter()
   const { data: session } = useSession()
-  const cameraRef = useRef<HTMLInputElement>(null)
   const galleryRef = useRef<HTMLInputElement>(null)
+  const videoRef = useRef<HTMLVideoElement>(null)
+  const canvasRef = useRef<HTMLCanvasElement>(null)
+  const streamRef = useRef<MediaStream | null>(null)
   const [scanning, setScanning] = useState(false)
   const [preview, setPreview] = useState<string | null>(null)
   const [result, setResult] = useState<ScanResult | null>(null)
   const [error, setError] = useState("")
   const [step, setStep] = useState<"result" | "guidance" | "confirming" | "celebrate">("result")
   const [earned, setEarned] = useState<{ pointsAwarded: number; totalPoints: number } | null>(null)
+  const [cameraActive, setCameraActive] = useState(false)
 
-  const matInfo = result ? MATERIAL_INFO[result.material] : null
+  // Cleanup camera on unmount
+  useEffect(() => {
+    return () => {
+      if (streamRef.current) {
+        streamRef.current.getTracks().forEach((t) => t.stop())
+      }
+    }
+  }, [])
 
-  const handleScan = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (!file) return
+  const openCamera = useCallback(async () => {
+    setError("")
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: "environment", width: { ideal: 1280 }, height: { ideal: 720 } },
+        audio: false,
+      })
+      streamRef.current = stream
+      setCameraActive(true)
+      if (videoRef.current) {
+        videoRef.current.srcObject = stream
+      }
+    } catch {
+      setError("Camera access denied. Please allow camera permission or choose a photo from gallery.")
+    }
+  }, [])
 
+  const closeCamera = useCallback(() => {
+    if (streamRef.current) {
+      streamRef.current.getTracks().forEach((t) => t.stop())
+      streamRef.current = null
+    }
+    setCameraActive(false)
+  }, [])
+
+  const capturePhoto = useCallback(() => {
+    if (!videoRef.current || !canvasRef.current) return
+    const video = videoRef.current
+    const canvas = canvasRef.current
+    canvas.width = video.videoWidth
+    canvas.height = video.videoHeight
+    const ctx = canvas.getContext("2d")
+    if (!ctx) return
+    ctx.drawImage(video, 0, 0)
+    canvas.toBlob((blob) => {
+      if (!blob) return
+      closeCamera()
+      const file = new File([blob], "camera.jpg", { type: "image/jpeg" })
+      processFile(file)
+    }, "image/jpeg", 0.9)
+  }, [closeCamera])
+
+  const processFile = useCallback(async (file: File) => {
     setScanning(true)
     setResult(null)
     setError("")
@@ -117,9 +166,14 @@ export default function ScanPage() {
       setScanning(false)
     }
 
-    if (cameraRef.current) cameraRef.current.value = ""
     if (galleryRef.current) galleryRef.current.value = ""
   }, [])
+
+  const handleGallery = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    processFile(file)
+  }, [processFile])
 
   const handleConfirm = useCallback(async () => {
     if (!result) return
@@ -141,6 +195,7 @@ export default function ScanPage() {
   }, [result])
 
   const counterRef = useRef<HTMLDivElement>(null)
+  const matInfo = result ? MATERIAL_INFO[result.material] : null
   const color = matInfo?.color || "#889296"
   const co2Saved = result?.material ? 0.4 : 0
   const xpEarned = earned ? (earned.pointsAwarded * 2.5).toFixed(0) : "0"
@@ -163,15 +218,14 @@ export default function ScanPage() {
         setMyMaterials(m)
       })
       .catch(() => {})
-  }, [earned, session])
+  }, [earned, session, result])
 
   const totalPoints = earned?.totalPoints ?? 0
   const unlockedBadge = ACHIEVEMENTS.find((a) => {
-    const pts = totalPoints
-    return a.check(myScans, pts, myMaterials) && a.id !== "first_scan"
+    return a.check(myScans, totalPoints, myMaterials) && a.id !== "first_scan"
   })
 
-  // Launch confetti on celebrate
+  // Confetti
   useEffect(() => {
     if (step !== "celebrate") return
     const container = document.getElementById("confettiContainer")
@@ -195,7 +249,7 @@ export default function ScanPage() {
     return () => pieces.forEach((p) => p.remove())
   }, [step])
 
-  // Counter animation on celebrate
+  // Counter animation
   useEffect(() => {
     if (step !== "celebrate" || !counterRef.current || !earned) return
     const el = counterRef.current
@@ -216,21 +270,26 @@ export default function ScanPage() {
       <div className="section-title" style={{ marginTop: 0 }}>AI Waste Scanner</div>
 
       {/* ── Camera / Image Area ── */}
-      <div className="camera-view" id="cameraView" style={{ cursor: scanning || result ? "default" : "pointer" }}>
-        <input ref={cameraRef} type="file" accept="image/*" capture="environment" onChange={handleScan} style={{ display: "none" }} />
-        <input ref={galleryRef} type="file" accept="image/*" onChange={handleScan} style={{ display: "none" }} />
-        {!preview && !scanning && !result && (
+      <div className="camera-view" id="cameraView" style={{ position: "relative", overflow: "hidden" }}>
+        <input ref={galleryRef} type="file" accept="image/*" onChange={handleGallery} style={{ display: "none" }} />
+        <canvas ref={canvasRef} style={{ display: "none" }} />
+
+        {cameraActive ? (
+          <video ref={videoRef} autoPlay playsInline style={{ width: "100%", height: "100%", objectFit: "cover", borderRadius: 16 }} />
+        ) : !preview && !scanning && !result ? (
           <div className="placeholder-cam">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
               <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" />
               <circle cx="12" cy="13" r="4" />
             </svg>
-            <p>Tap to upload a waste image for AI classification</p>
+            <p>Waste image for AI classification</p>
           </div>
-        )}
-        {preview && step !== "celebrate" && !scanning && !(result && step === "result") && (
+        ) : null}
+
+        {preview && !scanning && !result && !cameraActive && (
           <img src={preview} alt="Selected waste" style={{ width: "100%", height: "100%", objectFit: "cover", borderRadius: 16 }} />
         )}
+
         {(scanning || step === "guidance") && (
           <div className="scan-overlay" style={{ display: "block" }}>
             <div className="scan-line" />
@@ -238,19 +297,38 @@ export default function ScanPage() {
             <div className="scan-corner bl" /><div className="scan-corner br" />
           </div>
         )}
+
+        {/* Camera capture button overlay */}
+        {cameraActive && (
+          <div style={{ position: "absolute", bottom: 20, left: 0, right: 0, display: "flex", justifyContent: "center", gap: 16, zIndex: 10 }}>
+            <button onClick={capturePhoto} style={{
+              width: 60, height: 60, borderRadius: "50%", border: "4px solid #fff",
+              background: "var(--emerald)", cursor: "pointer",
+              display: "flex", alignItems: "center", justifyContent: "center",
+            }} aria-label="Capture photo">
+              <div style={{ width: 44, height: 44, borderRadius: "50%", background: "#fff" }} />
+            </button>
+            <button onClick={closeCamera} style={{
+              padding: "8px 16px", borderRadius: 20, border: "none",
+              background: "rgba(0,0,0,0.5)", color: "#fff", cursor: "pointer",
+              fontFamily: "inherit", fontSize: 13,
+              position: "absolute", top: 12, right: 12,
+            }}>
+              ✕ Cancel
+            </button>
+          </div>
+        )}
       </div>
 
       {/* ── Camera / Gallery Buttons ── */}
-      {!result && !scanning && (
+      {!result && !scanning && !cameraActive && (
         <div style={{ display: "flex", gap: 12, marginBottom: 20 }}>
-          <button onClick={() => cameraRef.current?.click()} style={{
+          <button onClick={openCamera} style={{
             flex: 1, padding: "12px 16px", borderRadius: "var(--radius-sm)", border: "1.5px dashed var(--emerald)",
             background: "var(--glass)", cursor: "pointer", fontFamily: "inherit", fontSize: 14, fontWeight: 600,
             color: "var(--emerald)", display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
           }}>
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" /><circle cx="12" cy="13" r="4" />
-            </svg>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" /><circle cx="12" cy="13" r="4" /></svg>
             Open Camera
           </button>
           <button onClick={() => galleryRef.current?.click()} style={{
@@ -258,9 +336,7 @@ export default function ScanPage() {
             background: "var(--glass)", cursor: "pointer", fontFamily: "inherit", fontSize: 14, fontWeight: 500,
             color: "var(--grey-600)", display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
           }}>
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <rect x="3" y="3" width="18" height="18" rx="2" ry="2" /><circle cx="8.5" cy="8.5" r="1.5" /><polyline points="21 15 16 10 5 21" />
-            </svg>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2" /><circle cx="8.5" cy="8.5" r="1.5" /><polyline points="21 15 16 10 5 21" /></svg>
             Choose Photo
           </button>
         </div>
@@ -331,14 +407,14 @@ export default function ScanPage() {
             <button className="btn-primary" onClick={() => setStep("guidance")}>
               Disposal Guidance & Confirm
             </button>
-            <button className="btn-secondary" onClick={() => { setResult(null); setPreview(null); setError("") }}>
+            <button className="btn-secondary" onClick={() => { setResult(null); setPreview(null); setError(""); closeCamera() }}>
               Scan Different Item
             </button>
           </div>
         </>
       )}
 
-      {/* ── STEP 2: Disposal Guidance + Confirm ── */}
+      {/* ── STEP 2: Guidance + Confirm ── */}
       {result && step === "guidance" && matInfo && (
         <>
           <div className="scan-result" style={{ borderTop: `4px solid ${color}` }}>
@@ -392,9 +468,7 @@ export default function ScanPage() {
       {earned && step === "celebrate" && result && (
         <div className="reward-earned" style={{ textAlign: "center", padding: "32px 0" }}>
           <div style={{ fontSize: 64, marginBottom: 8 }}>🎉</div>
-          <div ref={counterRef} style={{ fontSize: 48, fontWeight: 900, color: "var(--emerald)", marginBottom: 4 }}>
-            +0
-          </div>
+          <div ref={counterRef} style={{ fontSize: 48, fontWeight: 900, color: "var(--emerald)", marginBottom: 4 }}>+0</div>
           <div style={{ fontSize: 16, color: "var(--grey-500)", marginBottom: 24 }}>EcoPoints Earned</div>
 
           {unlockedBadge && (
@@ -422,15 +496,9 @@ export default function ScanPage() {
           </div>
 
           <div className="scan-actions" style={{ gap: 12 }}>
-            <button className="btn-primary" onClick={() => router.push("/dashboard")}>
-              Continue to Dashboard
-            </button>
-            <button className="btn-secondary" onClick={() => router.push("/rewards")}>
-              Redeem Rewards
-            </button>
-            <button className="btn-secondary" onClick={() => { setResult(null); setPreview(null); setEarned(null); setStep("result"); setError("") }}>
-              Scan Another Item
-            </button>
+            <button className="btn-primary" onClick={() => router.push("/dashboard")}>Continue to Dashboard</button>
+            <button className="btn-secondary" onClick={() => router.push("/rewards")}>Redeem Rewards</button>
+            <button className="btn-secondary" onClick={() => { setResult(null); setPreview(null); setEarned(null); setStep("result"); setError(""); closeCamera() }}>Scan Another Item</button>
           </div>
         </div>
       )}
