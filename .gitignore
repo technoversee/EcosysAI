@@ -41,6 +41,8 @@ yarn-error.log*
 data/*.db
 data/*.db-wal
 data/*.db-shm
+/auth
+/auth-wal
 
 # vercel
 .vercel
